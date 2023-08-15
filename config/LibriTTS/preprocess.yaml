@@ -11,7 +11,7 @@ preprocessing:
   val_size: 512
   text:
     text_cleaners: ["english_cleaners"]
-    language: "en"
+    language: "german"
   audio:
     sampling_rate: 22050
     max_wav_value: 32768.0
