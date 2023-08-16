@@ -311,7 +311,8 @@ class Preprocessor:
         tg_base_path = f"/data/speech-data/mls-align/mls_{self.lang}_opus/train/"
 
         # for i, speaker in enumerate(tqdm(os.listdir(in_dir))):
-        for i, row in self.df.iterrows():
+        # for i, row in self.df.iterrows():
+        for i, row in tqdm(self.df.iterrows(), total = self.df.shape[0]):
             
             speaker = str(row['speaker_id'])
             speakers[speaker] = i ## SPEAKER_ID: STR # i = index number
