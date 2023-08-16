@@ -1,19 +1,20 @@
 ## Github[preprocessor.py]: https://github.com/ming024/FastSpeech2/blob/master/preprocessor/preprocessor.py
 ## Github[config][preprocess]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
 
+
+################## preprocess.yaml inforamtion #######################
 # dataset: "LibriTTS"
-
 # path:
-#   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360"
+#   df_path: "/home/heiscold/prac/train_part_13k_german.csv"
+#   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
 #   lexicon_path: "lexicon/librispeech-lexicon.txt"
-#   raw_path: "./raw_data/LibriTTS"
-#   preprocessed_path: "./preprocessed_data/LibriTTS"
-
+#   raw_path: "./raw_data/LibriTTS" # in_dir
+#   preprocessed_path: "/home/heiscold/prac/" # "./preprocessed_data/LibriTTS" # out_dir
 # preprocessing:
 #   val_size: 512
 #   text:
 #     text_cleaners: ["english_cleaners"]
-#     language: "en"
+#     language: "german"
 #   audio:
 #     sampling_rate: 22050
 #     max_wav_value: 32768.0
