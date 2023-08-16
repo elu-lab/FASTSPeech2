@@ -1,7 +1,7 @@
 dataset: "LibriTTS"
 
 path:
-  df_path: "/home/heiscold/prac/train_mls_german.csv"
+  df_path: "/home/heiscold/prac/train_part_13k_german.csv"
   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
   lexicon_path: "lexicon/librispeech-lexicon.txt"
   raw_path: "./raw_data/LibriTTS" # in_dir
