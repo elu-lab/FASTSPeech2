@@ -82,3 +82,47 @@ class MultiHeadAttention(nn.Module):
         output = self.layer_norm(output + residual)
 
         return output, attn
+
+
+class PositionwiseFeedForward(nn.Module):
+    """ A two-feed-forward-layer module """
+
+    def __init__(self, d_in, d_hid, kernel_size, dropout=0.1):
+        super().__init__()
+
+        ## d_in = 256 ## encoder_hidden or d_model in MHA
+        ## d_hid = 1024
+
+        # Use Conv1D
+        # position-wise
+        self.w_1 = nn.Conv1d(
+            d_in,
+            d_hid,
+            kernel_size=kernel_size[0], ## kernel_size = [9, 1]
+            padding=(kernel_size[0] - 1) // 2,
+        )
+        # position-wise
+        self.w_2 = nn.Conv1d(
+            d_hid,
+            d_in,
+            kernel_size=kernel_size[1],
+            padding=(kernel_size[1] - 1) // 2,
+        )
+
+        self.layer_norm = nn.LayerNorm(d_in)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        ### x(=input): x = mha_output1.masked_fill(src_masks.unsqueeze(-1), 0) ## [16, 90, 256]
+        ### mha_output1: from MultiHeadAttentio n## [16, 90, 256]
+
+        residual = x
+        output = x.transpose(1, 2) ## [16, 90, 256] -> [16, 256, 90]
+        output = self.w_2(F.relu(self.w_1(output))) ## [16, 256, 90] -> [16, 1024, 90] -> [16, 256, 90]
+        output = output.transpose(1, 2) ## [16, 256, 90] -> [16, 90, 256]
+        output = self.dropout(output)
+        output = self.layer_norm(output + residual)
+
+        return output
+
+
