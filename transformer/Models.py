@@ -1,9 +1,9 @@
 
 #### Github [transformer.Models.py]: https://github.com/ming024/FastSpeech2/blob/master/transformer/Models.py
-
+# changed 'import numpy' as np position
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
 import transformer.Constants as Constants
 # from .Layers import FFTBlock ## Not yet
