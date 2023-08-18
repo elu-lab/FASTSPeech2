@@ -1,9 +1,8 @@
 
 ### Github[Modules.py]: https://github.com/ming024/FastSpeech2/blob/master/transformer/Modules.py#L6
-
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
 
 class ScaledDotProductAttention(nn.Module):
