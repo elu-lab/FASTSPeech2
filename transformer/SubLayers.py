@@ -34,28 +34,29 @@
 #   decoder_dropout: 0.2
 
 import copy
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 
 from .Modules import ScaledDotProductAttention
 
 
 class MultiHeadAttention(nn.Module):
     """ Multi-Head Attention module """
-    def __init__(self, n_head = 2, d_model=256, 
-                        # d_k, d_v, 
-                        dropout=0.1):
+    def __init__(self, n_head = 2, d_model=256, d_k = None, d_v =  None, dropout=0.1):
         super().__init__()
         assert d_model % n_head == 0
         self.head_dim = d_model // n_head
         self.n_head = n_head
         # self.d_k = d_k
         # self.d_v = d_v
+        self.d_k = d_model // n_head
+        self.d_v = d_model // n_head
 
         self.linear_dim = (d_model, d_model)
-        self.linears = nn.ModuleList([copy.deepcopy(nn.Linear(*self.linear_dim)) for _ in range(4)])
-        self.fc = nn.Linear(*self.linear_dim)
+        self.linears = nn.ModuleList([copy.deepcopy( nn.Linear(*self.linear_dim) ) for _ in range(4)])
+        self.w_qs, self.w_ks, self.w_vs, self.fc = self.linears  
+        # self.fc = nn.Linear(*self.linear_dim)
         # self.fc = nn.Linear(n_head * d_v, d_model)
 
         self.attention = ScaledDotProductAttention(temperature = np.power(self.head_dim, 0.5))
