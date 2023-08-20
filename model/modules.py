@@ -49,7 +49,7 @@ class LengthRegulator(nn.Module):
             # print(batch.shape, expand_target.shape) ## torch.Size([85, 256]) torch.Size([203])
             # expand_target: [8, 4, 7, ...] from duration: [16, 203]
 
-            expanded = expand(batch, expand_target)
+            expanded = self.expand(batch, expand_target)
             # print(expanded.shape) ## [598, 256]
 
             output.append(expanded)
