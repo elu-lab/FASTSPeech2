@@ -14,6 +14,28 @@ matplotlib.use("Agg")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+############################# @ Length Regulator #################################
+def pad(input_ele, mel_max_length=None):
+    # input_ele : output from 'expand' # [16, 1465, 256]
+    # mel_max_length : # max_mel_len from Dataloader # equal to max_len in LR
+    if mel_max_length:
+        max_len = mel_max_length # 1465
+    else:
+        max_len = max([input_ele[i].size(0) for i in range(len(input_ele))])
+
+    out_list = list()
+    for i, batch in enumerate(input_ele):
+        if len(batch.shape) == 1:
+            one_batch_padded = F.pad( batch, (0, max_len - batch.size(0)), "constant", 0.0)
+        elif len(batch.shape) == 2:
+            ## batch: torch.Size([598, 256])
+            one_batch_padded = F.pad(batch, (0, 0, 0, max_len - batch.size(0)), "constant", 0.0)
+            ## torch.Size([1465, 256]))
+        out_list.append(one_batch_padded)
+    out_padded = torch.stack(out_list)
+    return out_padded
+
+
 ############################# @ transformer #################################
 def get_mask_from_lengths(lengths, max_len=None):
     batch_size = lengths.shape[0]
@@ -24,6 +46,7 @@ def get_mask_from_lengths(lengths, max_len=None):
     mask = ids >= lengths.unsqueeze(1).expand(-1, max_len)
 
     return mask
+
 
 #################### @ dataset.py - Dataset ################
 def pad_1D(inputs, PAD=0):
@@ -65,7 +88,6 @@ def pad_2D(inputs, maxlen=None):
         output = np.stack([pad(x, max_len) for x in inputs])
 
     return output
-
 
 
 ##################### @dataloader-test and others #######################
