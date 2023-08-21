@@ -170,12 +170,12 @@ class VariancePredictor(nn.Module):
 
         self.conv_layer = nn.Sequential(OrderedDict([
             ### 1
-            ("conv1d_1", Conv(self.input_size, self.filter_size, kernel_size=self.kernel, padding=(self.kernel - 1) // 2),),
+            ("conv1d_1", Conv(self.input_size, self.filter_size, kernel_size = self.kernel, padding=(self.kernel - 1) // 2),),
             ("relu_1", nn.ReLU()),
             ("layer_norm_1", nn.LayerNorm(self.filter_size)),
             ("dropout_1", nn.Dropout(self.dropout)),
             #### 2
-            ("conv1d_2", Conv(self.filter_size, self.filter_size, kernel_size=kernel, padding=(self.kernel - 1) // 2),),
+            ("conv1d_2", Conv(self.filter_size, self.filter_size, kernel_size = self.kernel, padding=1,),
             ("relu_2", nn.ReLU()),
             ("layer_norm_2", nn.LayerNorm(self.filter_size)),
             ("dropout_2", nn.Dropout(self.dropout)),
