@@ -1,8 +1,4 @@
-
-
-
-
-
+#################3###### Github[model.modules.py]: https://github.com/ming024/FastSpeech2/blob/master/model/modules.py ###########################
 import os
 import json
 import copy
@@ -28,6 +24,136 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # (from dataloader): speakers, texts, src_lens, max_src_len, mels, mel_lens, max_mel_len, pitches, energies, duration
 # (inputs of v.a.) :speakers, texts, src_lens, max_src_len, mels, mel_lens, max_mel_len, p_targets, e_targets, d_targets, (p_control=1.0, d_control=1.0, e_control=1.0)
 
+
+
+########################################## 08.21(Mon) ################################################
+######## Need Modify code of `text` and add `pinyin`
+class VarianceAdaptor(nn.Module):
+    """Variance Adaptor"""
+
+    def __init__(self, preprocess_config, model_config):
+        super(VarianceAdaptor, self).__init__()
+        self.duration_predictor = VariancePredictor(model_config)
+        self.length_regulator = LengthRegulator()
+        self.pitch_predictor = VariancePredictor(model_config)
+        self.energy_predictor = VariancePredictor(model_config)
+
+        self.pitch_feature_level = preprocess_config["preprocessing"]["pitch"]["feature"] # 'phoneme_level'
+        self.energy_feature_level = preprocess_config["preprocessing"]["energy"]["feature"] # 'phoneme_level'
+
+        assert self.pitch_feature_level in ["phoneme_level", "frame_level"]
+        assert self.energy_feature_level in ["phoneme_level", "frame_level"]
+
+        pitch_quantization = model_config["variance_embedding"]["pitch_quantization"] # 'linear'
+        energy_quantization = model_config["variance_embedding"]["energy_quantization"] # 'linear'
+        n_bins = model_config["variance_embedding"]["n_bins"]  # 256
+
+        assert pitch_quantization in ["linear", "log"]
+        assert energy_quantization in ["linear", "log"]
+
+        with open(os.path.join(preprocess_config["path"]["preprocessed_path"], "stats.json")) as f:
+            stats = json.load(f)
+            pitch_min, pitch_max = stats["pitch"][:2]
+            energy_min, energy_max = stats["energy"][:2]
+
+        ## Pitch Quantization
+        if pitch_quantization == "log":
+            self.pitch_bins = nn.Parameter(torch.exp(torch.linspace(np.log(pitch_min), np.log(pitch_max), n_bins - 1)), requires_grad=False,)
+        else:
+            self.pitch_bins = nn.Parameter(torch.linspace(pitch_min, pitch_max, n_bins - 1), requires_grad=False,)
+
+        ## Energy Quantization 
+        if energy_quantization == "log":
+            self.energy_bins = nn.Parameter(torch.exp(torch.linspace(np.log(energy_min), np.log(energy_max), n_bins - 1)), requires_grad=False,)
+        else:
+            self.energy_bins = nn.Parameter(torch.linspace(energy_min, energy_max, n_bins - 1), requires_grad=False,)
+
+        ## Pitch Embedding, Energy Emebdding
+        self.pitch_embedding_layer = nn.Embedding(n_bins, model_config["transformer"]["encoder_hidden"])
+        self.energy_embedding_layer = nn.Embedding(n_bins, model_config["transformer"]["encoder_hidden"])
+
+
+    def get_pitch_embedding(self, x, target, mask, control):
+        prediction = self.pitch_predictor(x, mask)
+        if target is not None:
+            embedding = self.pitch_embedding_layer(torch.bucketize(target, self.pitch_bins))
+        else:
+            prediction = prediction * control
+            embedding = self.pitch_embedding_layer(torch.bucketize(prediction, self.pitch_bins))
+        return prediction, embedding
+
+    def get_energy_embedding(self, x, target, mask, control):
+        prediction = self.energy_predictor(x, mask)
+        if target is not None:
+            embedding = self.energy_embedding_layer(torch.bucketize(target, self.energy_bins))
+        else:
+            prediction = prediction * control
+            embedding = self.energy_embedding_layer(torch.bucketize(prediction, self.energy_bins))
+        return prediction, embedding
+
+    
+    def forward(
+        self,
+        x,
+        src_mask,
+        mel_mask=None,
+        max_len=None,
+        pitch_target=None,
+        energy_target=None,
+        duration_target=None,
+        p_control=1.0,
+        e_control=1.0,
+        d_control=1.0,
+    ):
+    ## x(=enc_output): [16, 214, 256]
+    ## src_masks: [16, 214]
+    ## max_mel_len: 1465
+
+        log_duration_prediction = self.duration_predictor(x, src_mask)
+        if self.pitch_feature_level == "phoneme_level":
+            ## p_targets: [16, 214]
+            pitch_prediction, pitch_embedding = self.get_pitch_embedding(x, pitch_target, src_mask, p_control)
+            ## pitch_prediction: [16, 214]
+            ## pitch_embedding: [16, 214, 256]
+            x = x + pitch_embedding
+        if self.energy_feature_level == "phoneme_level":
+            ## e_targets: [16, 214]
+            energy_prediction, energy_embedding = self.get_energy_embedding(x, energy_target, src_mask, p_control)
+            ## energy_prediction: [16, 214]
+            ## energy_embedding: [16, 214, 256]
+            x = x + energy_embedding
+            # x: [16, 214, 256]
+
+        if duration_target is not None:
+            # duration_target: [16, 214]
+            x, mel_len = self.length_regulator(x, duration_target, max_len)
+            # x: [16, 1465, 256]
+            # mel_len: 16
+            duration_rounded = duration_target
+            # duration_rounded = duration_target: [16, 214]
+        else:
+            duration_rounded = torch.clamp((torch.round(torch.exp(log_duration_prediction) - 1) * d_control), min=0,)
+            x, mel_len = self.length_regulator(x, duration_rounded, max_len)
+            mel_mask = get_mask_from_lengths(mel_len)
+
+        ### frame level!: we dont care 
+        if self.pitch_feature_level == "frame_level":
+            pitch_prediction, pitch_embedding = self.get_pitch_embedding(x, pitch_target, mel_mask, p_control)
+            x = x + pitch_embedding
+        if self.energy_feature_level == "frame_level":
+            energy_prediction, energy_embedding = self.get_energy_embedding(x, energy_target, mel_mask, p_control)
+            x = x + energy_embedding
+
+        
+        return (
+            x,                       # [16, 1465, 256]
+            pitch_prediction,        # [16, 214]
+            energy_prediction,       # [16, 214]
+            log_duration_prediction, # [16, 214]
+            duration_rounded,        # [16, 214]
+            mel_len,                 # 1465
+            mel_mask,                # [16, 1465]
+        )
 
 ########################################## 08.21(Mon) ################################################
 class VariancePredictor(nn.Module):
