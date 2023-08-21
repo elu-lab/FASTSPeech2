@@ -90,4 +90,69 @@ class Encoder(nn.Module):
 
 
 
+############################# @ fastspeech2 #################################
+class Decoder(nn.Module):
+    """ Decoder """
 
+    def __init__(self, config=None):
+        super(Decoder, self).__init__()
+
+        n_position = config["max_seq_len"] + 1 # 1000 + 1 
+        n_src_vocab = len(symbols) + 1 # 360 + 1 
+        d_word_vec = config["transformer"]["decoder_hidden"] # 256 
+        n_layers = config["transformer"]["decoder_layer"] # 6
+        n_head = config["transformer"]["decoder_head"] # 2 
+        d_k = d_v = (config["transformer"]["decoder_hidden"] // config["transformer"]["decoder_head"]) # 128  
+        d_model = config["transformer"]["decoder_hidden"]# 256 
+        d_inner = config["transformer"]["conv_filter_size"] # 1024 
+        kernel_size = config["transformer"]["conv_kernel_size"] # [9, 1] 
+        dropout = config["transformer"]["decoder_dropout"] # .1 
+
+        self.max_seq_len = config["max_seq_len"] # 1000 
+        self.d_model = d_model
+
+        self.position_enc = nn.Parameter(get_sinusoid_encoding_table(n_position, d_word_vec).unsqueeze(0), requires_grad=False,)
+
+        self.layer_stack = nn.ModuleList([FFTBlock(d_model, n_head, d_k, d_v, d_inner, kernel_size, dropout=dropout) for _ in range(n_layers)])
+
+    def forward(self, enc_seq, mask, return_attns=False):
+        ### enc_seq: output of Variance Adaptor [16, 1493, 256]
+        ### mask: mel_masks: [16, 1493]
+
+        dec_slf_attn_list = []
+        batch_size, max_len = enc_seq.shape[0], enc_seq.shape[1]
+
+        # -- Forward
+        ### Still Don't know here: self.training??
+        if not self.training and enc_seq.shape[1] > self.max_seq_len:
+            # print("Upper")
+            # -- Prepare masks
+            slf_attn_mask = mask.unsqueeze(1).expand(-1, max_len, -1)
+            dec_output = enc_seq + get_sinusoid_encoding_table(enc_seq.shape[1], self.d_model)[: enc_seq.shape[1], :].unsqueeze(0).expand(batch_size, -1, -1).to( enc_seq.device)
+        else:
+            # print("Bottom") ## printed
+            # -- Prepare masks
+            max_len = min(max_len, self.max_seq_len)
+            # 1000
+            slf_attn_mask = mask.unsqueeze(1).expand(-1, max_len, -1)
+            # slf_attn_mask: [16, 1000, 1493]
+            dec_output = enc_seq[:, :max_len, :] + self.position_enc[:, :max_len, : ].expand(batch_size, -1, -1)
+            # enc_seq[:, :max_len, :] : [16, 1000, 256]
+            # self.position_enc[:, :max_len, : ].expand(batch_size, -1, -1) : [16, 1000, 256]
+            # dec_output : [16, 1000, 256]
+
+            mask = mask[:, :max_len]
+            # mask: [16, 1493] -> [16, 1000]
+            slf_attn_mask = slf_attn_mask[:, :, :max_len]
+             # slf_attn_mask: [16, 1000, 1493] ->  [16, 1000, 1000]
+
+        for dec_layer in self.layer_stack:
+            # mask: [16, 1000]
+            # slf_attn_mask: [16, 1000, 1000]
+            dec_output, dec_slf_attn = dec_layer(dec_output, mask=mask, slf_attn_mask=slf_attn_mask )
+            # dec_output   : [16, 1000, 256]
+            # dec_slf_attn : [32, 1000, 1000]
+            if return_attns:
+                dec_slf_attn_list += [dec_slf_attn]
+
+        return dec_output
