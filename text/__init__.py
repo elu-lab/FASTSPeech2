@@ -63,9 +63,14 @@ def _clean_text(text, cleaner_names):
     return text
 
 
-def _symbols_to_sequence(symbols):
-    return [_symbol_to_id[s] for s in symbols if _should_keep_symbol(s)]
+# def _symbols_to_sequence(symbols):
+    # return [_symbol_to_id[s] for s in symbols if _should_keep_symbol(s)]
 
+def _symbols_to_sequence(symbols):
+    missing=[s for s in symbols if not _should_keep_symbol(s)]
+    if missing:
+        print(missing)
+    return [_symbol_to_id[s] for s in symbols if _should_keep_symbol(s)]
 
 def _arpabet_to_sequence(text):
     return _symbols_to_sequence(["@" + s for s in text.split()])
