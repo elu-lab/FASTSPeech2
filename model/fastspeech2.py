@@ -7,7 +7,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from transformer import Encoder, Decoder, PostNet
+# from transformer import Encoder, Decoder, PostNet ## Doesn't work
+from transformer.Models import Encoder, Decoder
+from transformer.Layers import PostNet
+
 from .modules import VarianceAdaptor
 from utils.tools import get_mask_from_lengths
 
