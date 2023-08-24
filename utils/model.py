@@ -13,17 +13,12 @@ def get_model(args, configs, device, train=False):
 
     model = FastSpeech2(preprocess_config, model_config).to(device)
     if args.restore_step:
-        ckpt_path = os.path.join(
-            train_config["path"]["ckpt_path"],
-            "{}.pth.tar".format(args.restore_step),
-        )
+        ckpt_path = os.path.join(train_config["path"]["ckpt_path"], "{}.pth.tar".format(args.restore_step),)
         ckpt = torch.load(ckpt_path)
         model.load_state_dict(ckpt["model"])
 
     if train:
-        scheduled_optim = ScheduledOptim(
-            model, train_config, model_config, args.restore_step
-        )
+        scheduled_optim = ScheduledOptim( model, train_config, model_config, args.restore_step)
         if args.restore_step:
             scheduled_optim.load_state_dict(ckpt["optimizer"])
         model.train()
@@ -46,13 +41,9 @@ def get_vocoder(config, device):
 
     if name == "MelGAN":
         if speaker == "LJSpeech":
-            vocoder = torch.hub.load(
-                "descriptinc/melgan-neurips", "load_melgan", "linda_johnson"
-            )
+            vocoder = torch.hub.load("descriptinc/melgan-neurips", "load_melgan", "linda_johnson" )
         elif speaker == "universal":
-            vocoder = torch.hub.load(
-                "descriptinc/melgan-neurips", "load_melgan", "multi_speaker"
-            )
+            vocoder = torch.hub.load( "descriptinc/melgan-neurips", "load_melgan", "multi_speaker" )
         vocoder.mel2wav.eval()
         vocoder.mel2wav.to(device)
     # elif name == "HiFi-GAN":
