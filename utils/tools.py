@@ -145,7 +145,21 @@ def to_device(data, device):
 
 
 ####################################### @ train.py ########################################################
+def expand(values, durations):
+    out = list()
+    for value, d in zip(values, durations):
+        out += [value] * max(0, int(d))
+    return np.array(out)
 
+
+def expand(values, durations):
+    out = list()
+    for value, d in zip(values, durations):
+        out += [value] * max(0, int(d))
+    return np.array(out)
+
+
+####################################### @ train.py ########################################################
 def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_config):
 
     basename = targets[0][0]
@@ -201,6 +215,7 @@ def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_con
     return fig, wav_reconstruction, wav_prediction, basename
 
 
+####################################### @ train.py ########################################################
 def synth_samples(targets, predictions, vocoder, model_config, preprocess_config, path):
 
     basenames = targets[0]
@@ -250,6 +265,7 @@ def synth_samples(targets, predictions, vocoder, model_config, preprocess_config
         wavfile.write(os.path.join(path, "{}.wav".format(basename)), sampling_rate, wav)
 
 
+####################################### @ train.py ########################################################
 def plot_mel(data, stats, titles):
     fig, axes = plt.subplots(len(data), 1, squeeze=False)
     if titles is None:
