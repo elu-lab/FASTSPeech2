@@ -13,6 +13,9 @@ from model.fastspeech2 import *
 from model.optimizer import *
 
 
+
+
+################################# @ train.py #####################################
 def get_model(args, configs, device, train=False):
     (preprocess_config, model_config, train_config) = configs
 
@@ -63,12 +66,13 @@ def get_model(args, configs, device, train=False):
 
 
 
+################################# @ train.py #####################################
 def get_param_num(model):
     num_param = sum(param.numel() for param in model.parameters())
     return num_param
 
 
-###################### Test: MelGAN #########################
+###################### Test:nvidia/HiFiGAN #########################
 def get_vocoder(config, device):
     name = config["vocoder"]["model"]
     speaker = config["vocoder"]["speaker"]
@@ -81,6 +85,7 @@ def get_vocoder(config, device):
             ### mel() takes 0 positional arguments but 5 were given
         vocoder.mel2wav.eval()
         vocoder.mel2wav.to(device)
+        return vocoder
     elif name == "HiFi-GAN":
         # with open("hifigan/config.json", "r") as f:
         #     config = json.load(f)
@@ -99,7 +104,7 @@ def get_vocoder(config, device):
         # vocoder.remove_weight_norm()
         vocoder.to(device)
 
-    return vocoder
+        return vocoder, vocoder_train_setup, denoiser 
 
 
 ###################### Original ##################################
@@ -135,13 +140,31 @@ def get_vocoder(config, device):
 #     return vocoder
 
 
-def vocoder_infer(mels, vocoder, model_config, preprocess_config, lengths=None):
+################################# @ train.py - HiFiGAN #####################################
+def vocoder_infer(mels, model_config, preprocess_config, 
+                  vocoder, vocoder_train_setup = None, denoiser = None, denoising_strength = 0.005,
+                  lengths=None):
+    
     name = model_config["vocoder"]["model"]
+    
     with torch.no_grad():
+    
         if name == "MelGAN":
             wavs = vocoder.inverse(mels / np.log(10))
+
         elif name == "HiFi-GAN":
-            wavs = vocoder(mels).squeeze(1)
+            ##### HifiGAN Vocoder  Colab
+            # mel, mel_lens, *_ = fastpitch(batch['text'].to(device), **gen_kw)
+            # audios = hifigan(mel).float()
+            # audios = denoiser(audios.squeeze(1), denoising_strength)
+            # audios = audios.squeeze(1) * vocoder_train_setup['max_wav_value']
+
+            ### Original
+            # wavs = vocoder(mels).squeeze(1)
+            wavs = vocoder(mels).float()
+            wavs = denoiser(wavs.squeeze(1), denoising_strength)
+            wavs = wavs.squeeze(1) # * vocoder_train_setup['max_wav_value']
+
 
     wavs = (
         wavs.cpu().numpy()
