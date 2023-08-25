@@ -5,7 +5,12 @@ import torch
 import numpy as np
 
 # import hifigan
-from model import FastSpeech2, ScheduledOptim
+# from model import FastSpeech2, ScheduledOptim
+
+# from model.modules import *
+from model.fastspeech2 import *
+# from model.loss import *
+from model.optimizer import *
 
 
 def get_model(args, configs, device, train=False):
