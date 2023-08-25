@@ -142,16 +142,29 @@ def to_device(data, device):
         return (ids, raw_texts, speakers, texts, src_lens, max_src_len)
 
 
+####################################### @ train.py ########################################################
+## Logger: Tensorboard
+def log_fn(logger, step=None, losses=None, fig=None, audio=None, sampling_rate=22050, tag=""):
+    if losses is not None:
+        logger.add_scalar("Loss/total_loss", losses[0], step)
+        logger.add_scalar("Loss/mel_loss", losses[1], step)
+        logger.add_scalar("Loss/mel_postnet_loss", losses[2], step)
+        logger.add_scalar("Loss/pitch_loss", losses[3], step)
+        logger.add_scalar("Loss/energy_loss", losses[4], step)
+        logger.add_scalar("Loss/duration_loss", losses[5], step)
+
+    if fig is not None:
+        logger.add_figure(tag, fig)
+
+    if audio is not None:
+        logger.add_audio(
+            tag,
+            audio / max(abs(audio)),
+            sample_rate=sampling_rate,
+        )
 
 
 ####################################### @ train.py ########################################################
-def expand(values, durations):
-    out = list()
-    for value, d in zip(values, durations):
-        out += [value] * max(0, int(d))
-    return np.array(out)
-
-
 def expand(values, durations):
     out = list()
     for value, d in zip(values, durations):
