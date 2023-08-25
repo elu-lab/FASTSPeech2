@@ -14,6 +14,8 @@ matplotlib.use("Agg")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+
+
 ############################# @ Length Regulator #################################
 def pad(input_ele, mel_max_length=None):
     # input_ele : output from 'expand' # [16, 1465, 256]
@@ -34,7 +36,6 @@ def pad(input_ele, mel_max_length=None):
         out_list.append(one_batch_padded)
     out_padded = torch.stack(out_list)
     return out_padded
-
 
 ############################# @ transformer #################################
 def get_mask_from_lengths(lengths, max_len=None):
@@ -64,6 +65,7 @@ def pad_1D(inputs, PAD=0):
 
     return padded
 
+
 def pad_2D(inputs, maxlen=None):
     
     ### function in function ###
@@ -90,7 +92,7 @@ def pad_2D(inputs, maxlen=None):
     return output
 
 
-##################### @dataloader-test and others #######################
+##################### @ dataloader-test and others #######################
 def to_device(data, device):
     if len(data) == 12:
         (
@@ -163,7 +165,6 @@ def log_fn(logger, step=None, losses=None, fig=None, audio=None, sampling_rate=2
             sample_rate=sampling_rate,
         )
 
-
 ####################################### @ train.py ########################################################
 def expand(values, durations):
     out = list()
@@ -171,9 +172,10 @@ def expand(values, durations):
         out += [value] * max(0, int(d))
     return np.array(out)
 
-
 ####################################### @ train.py ########################################################
-def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_config):
+def synth_one_sample(targets, predictions, 
+                     vocoder, vocoder_train_setup, denoiser, denoising_strength, 
+                     model_config, preprocess_config):
 
     basename = targets[0][0]
     src_len = predictions[8][0].item()
@@ -212,15 +214,22 @@ def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_con
 
         wav_reconstruction = vocoder_infer(
             mel_target.unsqueeze(0),
-            vocoder,
             model_config,
             preprocess_config,
+            vocoder, 
+            vocoder_train_setup, 
+            denoiser, 
+            denoising_strength,
         )[0]
+
         wav_prediction = vocoder_infer(
             mel_prediction.unsqueeze(0),
-            vocoder,
             model_config,
             preprocess_config,
+            vocoder, 
+            vocoder_train_setup, 
+            denoiser, 
+            denoising_strength,
         )[0]
     else:
         wav_reconstruction = wav_prediction = None
@@ -229,7 +238,9 @@ def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_con
 
 
 ####################################### @ train.py ########################################################
-def synth_samples(targets, predictions, vocoder, model_config, preprocess_config, path):
+def synth_samples(targets, predictions, 
+                  vocoder, vocoder_train_setup, denoiser, denoising_strength, 
+                  model_config, preprocess_config, path):
 
     basenames = targets[0]
     for i in range(len(predictions[0])):
@@ -270,7 +281,7 @@ def synth_samples(targets, predictions, vocoder, model_config, preprocess_config
     mel_predictions = predictions[1].transpose(1, 2)
     lengths = predictions[9] * preprocess_config["preprocessing"]["stft"]["hop_length"]
     wav_predictions = vocoder_infer(
-        mel_predictions, vocoder, model_config, preprocess_config, lengths=lengths
+        mel_predictions, model_config, preprocess_config, vocoder, vocoder_train_setup, denoiser, denoising_strength = 0.005, lengths=lengths
     )
 
     sampling_rate = preprocess_config["preprocessing"]["audio"]["sampling_rate"]
