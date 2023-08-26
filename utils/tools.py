@@ -173,9 +173,9 @@ def expand(values, durations):
     return np.array(out)
 
 ####################################### @ train.py ########################################################
-def synth_one_sample(targets, predictions, 
-                     vocoder, vocoder_train_setup, denoiser, denoising_strength, 
-                     model_config, preprocess_config):
+def synth_one_sample(targets, predictions, model_config, preprocess_config,
+                     vocoder, vocoder_train_setup=None, denoiser=None, denoising_strength=0.005, 
+                     ):
 
     basename = targets[0][0]
     src_len = predictions[8][0].item()
@@ -238,9 +238,9 @@ def synth_one_sample(targets, predictions,
 
 
 ####################################### @ train.py ########################################################
-def synth_samples(targets, predictions, 
-                  vocoder, vocoder_train_setup, denoiser, denoising_strength, 
-                  model_config, preprocess_config, path):
+def synth_samples(targets, predictions, model_config, preprocess_config, path,
+                  vocoder, vocoder_train_setup=None, denoiser = None, denoising_strength=0.005, 
+                  ):
 
     basenames = targets[0]
     for i in range(len(predictions[0])):
