@@ -1,5 +1,4 @@
-
-## Github [utils.tools]: https://github.com/ming024/FastSpeech2/blob/master/utils/tools.py
+####### Github [utils.tools]: https://github.com/ming024/FastSpeech2/blob/master/utils/tools.py
 import os
 import json
 
@@ -12,8 +11,6 @@ from matplotlib import pyplot as plt
 
 matplotlib.use("Agg")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
 
 
 ############################# @ Length Regulator #################################
@@ -158,12 +155,12 @@ def log_fn(logger, step=None, losses=None, fig=None, audio=None, sampling_rate=2
     if fig is not None:
         logger.add_figure(tag, fig)
 
-    if audio is not None:
-        logger.add_audio(
-            tag,
-            audio / max(abs(audio)),
-            sample_rate=sampling_rate,
-        )
+    # if audio is not None:
+    #     logger.add_audio(
+    #         tag,
+    #         audio / max(abs(audio)),
+    #         sample_rate=sampling_rate,
+    #     )
 
 ####################################### @ train.py ########################################################
 def expand(values, durations):
