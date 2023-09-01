@@ -1,3 +1,5 @@
+########## Github[utils.model.py]: https://github.com/ming024/FastSpeech2/blob/master/utils/model.py ################
+
 import os
 import json
 
@@ -13,23 +15,24 @@ from model.fastspeech2 import *
 from model.optimizer import *
 
 
-
-
 ################################# @ train.py #####################################
 def get_model(args, configs, device, train=False):
     (preprocess_config, model_config, train_config) = configs
 
     model = FastSpeech2(preprocess_config, model_config).to(device)
     if args is not None and args.restore_step:
-        ckpt_path = os.path.join(train_config["path"]["ckpt_path"], "{}.pth.tar".format(args.restore_step),)
+        ckpt_path = os.path.join(train_config["path"]["ckpt_path"], "model_{}.pth".format(args.restore_step),)
         ckpt = torch.load(ckpt_path)
-        model.load_state_dict(ckpt["model"])
+        # model.load_state_dict(ckpt["model"])
+        model.load_state_dict(ckpt)
 
     if train:
         scheduled_optim = ScheduledOptim( model, train_config, model_config, 0)
         if args is not None and args.restore_step:
             scheduled_optim = ScheduledOptim( model, train_config, model_config, args.restore_step)
-            scheduled_optim.load_state_dict(ckpt["optimizer"])
+            ckpt_opim_path = torch.load(os.path.join(train_config["path"]["ckpt_path"], "optimizer_{}.pth".format(args.restore_step),))
+            # scheduled_optim.load_state_dict(ckpt["optimizer"])
+            scheduled_optim.load_state_dict(ckpt_opim_path)
         model.train()
         return model, scheduled_optim
 
