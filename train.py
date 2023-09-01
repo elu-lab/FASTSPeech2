@@ -202,9 +202,9 @@ def main(args, configs):
             },
         )
 
-    ## Training Start
-    sample_audios, sample_eval_audios = [], []
-    figs_train, figs_eval = [], []
+    ### Training Start
+    # sample_audios, sample_eval_audios = [], []
+    # figs_train, figs_eval = [], []
     denoising_strength = 0.005
 
     ## This is for wandb Audio Added
@@ -280,7 +280,7 @@ def main(args, configs):
                             with open(os.path.join(train_log_path, "log.txt"), "a") as f:
                                 f.write(message1 + message2 + "\n")
 
-                            log_fn(train_logger, step, losses=losses)
+                            # log_fn(train_logger, step, losses=losses)
 
                             ## wandb logging
                             accelerator.log({"Train/Total_loss": losses[0],
@@ -306,7 +306,7 @@ def main(args, configs):
                                 denoising_strength,
                             )
                             # mel spectrogram plot 
-                            figs_train += [fig]
+                            # figs_train += [fig]
                             # wandb.log({ 'chart' : wandb.Image(fig) })
                             accelerator.log({ 'Train/Mel_SPectrogram' : wandb.Image(fig) })
 
@@ -315,7 +315,7 @@ def main(args, configs):
                             predict_audio = wandb.Audio(wav_prediction, sample_rate = 22050)
                             preview_table.add_data(step, 'TRAIN', label_audio, predict_audio)
 
-                            sample_audios += [wav_reconstruction, wav_prediction]
+                            # sample_audios += [wav_reconstruction, wav_prediction]
 
                             # log_fn( train_logger,
                             #         fig=fig,
@@ -337,19 +337,19 @@ def main(args, configs):
                         # if step % (100*3) == 0:
                             model.eval()
                             message, fig, sample_audios_from_vals = evaluate_fn( model, 
-                                                                            step, 
-                                                                            configs,
-                                                                            val_logger, 
-                                                                            vocoder, 
-                                                                            vocoder_train_setup, 
-                                                                            denoiser, 
-                                                                            accelerator, 
-                                                                            device = accelerator.device,
-                                                                            sample_needs = True
-                                                                            )
+                                                                                 step, 
+                                                                                 configs,
+                                                                                 val_logger, 
+                                                                                 vocoder, 
+                                                                                 vocoder_train_setup, 
+                                                                                 denoiser, 
+                                                                                 accelerator, 
+                                                                                 device = accelerator.device,
+                                                                                 sample_needs = True
+                                                                                 )
 
                             # mel spectrogram plot 
-                            figs_eval += [fig]
+                            # figs_eval += [fig]
                             # wandb.log({ 'chart' : wandb.Image(fig) })
                             accelerator.log({'Eval/Mel_SPectrogram' : wandb.Image(fig) })
 
@@ -358,7 +358,7 @@ def main(args, configs):
                             predict_audio = wandb.Audio(sample_audios_from_vals[1], sample_rate = 22050)
                             preview_table.add_data(step, 'EVAL', label_audio, predict_audio)
                             
-                            sample_eval_audios += sample_audios_from_vals
+                            # sample_eval_audios += sample_audios_from_vals
 
                             with open(os.path.join(val_log_path, "log.txt"), "a") as f:
                                 f.write(message + "\n")
