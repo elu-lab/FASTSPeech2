@@ -1,4 +1,5 @@
 ######## Gihutb[train.py]: https://github.com/ming024/FastSpeech2/blob/master/train.py ###########
+
 import os
 import yaml
 import gc 
@@ -87,24 +88,6 @@ def main(args, configs):
     print("Valid Loader: Done")
     print()
 
-    ### Model
-    model, optimizer = get_model(None, configs, device = torch.device('cpu'), train=True)
-    print("Model, Optimizer Done")
-    ## model cuda? Check!
-    print("MODEL IS CUDA? :", next(model.parameters()).is_cuda)
-
-    num_param = get_param_num(model)
-    print("Number of FastSpeech2 Parameters:", num_param)
-
-    ## Loss Function
-    loss_fn = FastSpeech2Loss(preprocess_config, model_config) # .to(device)
-    print("Loss_fn: Done")
-    print()
-
-    # Load vocoder
-    vocoder, vocoder_train_setup, denoiser = get_vocoder(model_config, torch.device('cpu'))
-    print("Vocoder Downloaded")
-
     # Init logger
     for p in train_config["path"].values():
         os.makedirs(p, exist_ok=True)
@@ -126,8 +109,11 @@ def main(args, configs):
 
     n_epochs = args.n_epochs
     # total_step = train_config["step"]["total_step"] ## original
-    total_step = n_epochs * len(train_loader) * group_size # 3 
+    # total_step = n_epochs * len(train_loader) * group_size # 3 
+    total_step = step + n_epochs * len(train_loader) * group_size if step != 1 else n_epochs * len(train_loader) * group_size
     print(f"Total STEP: {total_step }") ## 661080
+    epoch_step = len(train_loader) * group_size
+    print(f"STEPs per EPOCH: {epoch_step }") ## 661080
 
     print(f"N_EPOCHS: {n_epochs}") ## 840
     print(f"BATCH SIZE: {batch_size}") ## 16
@@ -140,25 +126,52 @@ def main(args, configs):
     print(f"GRAD CLIP THRESH: {grad_clip_thresh}")
 
     log_step = train_config["step"]["log_step"]
-    print(f"Log STEP: {log_step  }")
+    print(f"Log STEP: {log_step}")
 
     save_step = train_config["step"]["save_step"]
-    print(f"save STEP: {save_step  }")
+    print(f"save STEP: {save_step}")
 
+    save_epoch = args.save_epochs
+    save_epoch_steps =  save_epoch * len(train_loader) * group_size 
+    print(f"save EPOCH: {save_epoch} (={save_epoch_steps})")
+
+    # parser.add_argument('--synthesis_logging_epochs', type = int, default = 100, help="Sample logging Epochs")
     synth_step = train_config["step"]["synth_step"]
-    print(f"Synth STEP: {synth_step  }")
+    print(f"Synth STEP: {synth_step}")
+
+    synth_epoch = args.synthesis_logging_epochs
+    synth_epoch_steps = synth_epoch * len(train_loader) * group_size 
+    print(f"Synth EPOCH: {synth_epoch} (={synth_epoch_steps})")
 
     val_step = train_config["step"]["val_step"]
-    print(f"VAL STEP: {val_step  }")
+    print(f"VAL STEP: {val_step}")
 
     sampling_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
     sample_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
     print(f"sampling_rate(=sample_rate): {sampling_rate}")
     print()
-    
+
     ## Accelerator
     ## https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
-    accelerator = Accelerator( gradient_accumulation_steps = grad_acc_step, log_with="wandb")
+    accelerator = Accelerator(gradient_accumulation_steps = grad_acc_step, log_with="wandb")
+
+    ### Model
+    model, optimizer = get_model(args, configs, device = accelerator.device, train=True)
+    print("Model, Optimizer Done")
+    ## model cuda? Check!
+    print("MODEL IS CUDA? :", next(model.parameters()).is_cuda)
+
+    num_param = get_param_num(model)
+    print("Number of FastSpeech2 Parameters:", num_param)
+
+    ## Loss Function
+    loss_fn = FastSpeech2Loss(preprocess_config, model_config) # .to(device)
+    print("Loss_fn: Done")
+    print()
+
+    # Load vocoder
+    vocoder, vocoder_train_setup, denoiser = get_vocoder(model_config, torch.device('cpu'))
+    print("Vocoder Downloaded")
     
     ### To Device
     model, vocoder, denoiser, loss_fn, optimizer, train_loader, valid_loader = accelerator.prepare(model, vocoder, denoiser, loss_fn, optimizer, train_loader, valid_loader)
@@ -178,13 +191,13 @@ def main(args, configs):
         'vocoder': model_config["vocoder"]["model"],
         "n_epochs": n_epochs,
         'batch_size': batch_size,
-        'grad_acc_step': train_config["optimizer"]["grad_acc_step"],
-        'grad_clip_thresh': train_config["optimizer"]["grad_clip_thresh"],
-        'total_step': n_epochs * len(train_loader) * group_size,
+        'grad_acc_step': grad_acc_step,
+        'grad_clip_thresh': grad_clip_thresh,
+        'total_step': int(total_step - step),
         'log_step': train_config["step"]["log_step"],
-        'synth_step': train_config["step"]["synth_step"],
-        'val_step': train_config["step"]["val_step"],
-        'save_step': train_config["step"]["save_step"],
+        'synth_step': [synth_step, synth_epoch, synth_epoch_steps],
+        'val_step': val_step,
+        'save_step': [save_step, save_epoch, save_epoch_steps],
         'sampling_rate': preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
     }
 
@@ -274,9 +287,9 @@ def main(args, configs):
                             ### Tensorboard
                             message1 = "Step {}/{}, ".format(step, total_step)
                             message2 = "Total Loss: {:.4f}, Mel Loss: {:.4f}, Mel PostNet Loss: {:.4f}, Pitch Loss: {:.4f}, Energy Loss: {:.4f}, Duration Loss: {:.4f}".format(*losses)
-                            
+                            # print()
                             print(f"{m_} Train[{message1}]: {message2} {sr_}")
-
+                            # print()
                             with open(os.path.join(train_log_path, "log.txt"), "a") as f:
                                 f.write(message1 + message2 + "\n")
 
@@ -293,7 +306,7 @@ def main(args, configs):
                         
                         ####### Syntheize Speech Sample 
                         ## tensoroard audio off
-                        if step % synth_step == 0:
+                        if step % synth_step == 0 or step % synth_epoch_steps == 0:
                         # if step % (100*3) == 0:
                             fig, wav_reconstruction, wav_prediction, tag = synth_one_sample(
                                 batch,
@@ -335,6 +348,7 @@ def main(args, configs):
                         
                         if step % val_step == 0:
                         # if step % (100*3) == 0:
+                            # print()
                             model.eval()
                             message, fig, sample_audios_from_vals = evaluate_fn( model, 
                                                                                  step, 
@@ -347,7 +361,7 @@ def main(args, configs):
                                                                                  device = accelerator.device,
                                                                                  sample_needs = True
                                                                                  )
-
+                            # print()
                             # mel spectrogram plot 
                             # figs_eval += [fig]
                             # wandb.log({ 'chart' : wandb.Image(fig) })
@@ -365,7 +379,7 @@ def main(args, configs):
                 
                             model.train()
 
-                        if step % save_step == 0:
+                        if step % save_step == 0 or step % save_epoch_steps == 0:
                         # if step % (100*3) == 0:
                             accelerator.wait_for_everyone()
                             model = accelerator.unwrap_model(model)
@@ -390,7 +404,12 @@ def main(args, configs):
                             #         "{}.pth.tar".format(step),
                             #     ),
                             # )
+                        # print(f"{step} STEP is completed")
+                        # print()
                         step += 1
+
+            print(f"{s_} {epoch} EPOCH is completed{sr_}")
+            # print()
                         
 
         print(f"{b_}================================================== Training_EP:[{epoch}/{n_epochs}]_STEP:[{step}] ==================================================")
@@ -430,6 +449,8 @@ if __name__ == "__main__":
     parser.add_argument("--restore_step", type=int, default=0)
     parser.add_argument('--seed', type = int, default = 2023, help="Seed")
     parser.add_argument('--n_epochs', type = int, default = 840, help="Epochs")
+    parser.add_argument('--save_epochs', type = int, default = 30, help="Model SAVE Epochs")
+    parser.add_argument('--synthesis_logging_epochs', type = int, default = 100, help="Sample logging Epochs")
     # parser.add_argument('--batch_size', type = int, default = 16, help="Batch Size") ### This is defined in yaml, this doesn't work
     parser.add_argument('--group_size', type = int, default = 3, help="Group Size")
     parser.add_argument('--project_name', type = str, default = "FastSpeech2_german", help="PROJECT NAME IN WANDB")
@@ -437,15 +458,18 @@ if __name__ == "__main__":
 
     ## configs ?
     ## why? /home/heiscold/fs2/config/LibriTTS
-    # python3 train.py -p ./config/LibriTTS/preprocess.yaml -m ./config/LibriTTS/model.yaml -t ./config/LibriTTS/train.yaml
-    # CUDA_VISIBLE_DEVICES=0,1 python3 train.py -p ./config/LibriTTS/preprocess.yaml -m ./config/LibriTTS/model.yaml -t ./config/LibriTTS/train.yaml
+
+    ## Train_t01
     # CUDA_VISIBLE_DEVICES=0 python3 train.py -p ./config/LibriTTS/preprocess.yaml -m ./config/LibriTTS/model.yaml -t ./config/LibriTTS/train.yaml
+
+    ## Train_t01_dot_6
+    # CUDA_VISIBLE_DEVICES=0 python3 train.py --restore_step 600000 --n_epochs 75 --save_epochs 20 --synthesis_logging_epochs 20 --try_name Train_t01_part2
    
     parser.add_argument(
         "-p",
         "--preprocess_config",
         type=str,
-        required=True,
+        # required=True,
         default = "./config/LibriTTS/preprocess.yaml",
         help="path to preprocess.yaml",
     )
@@ -453,7 +477,7 @@ if __name__ == "__main__":
         "-m", 
         "--model_config", 
         type=str, 
-        required=True, 
+        # required=True, 
         default = "./config/LibriTTS/model.yaml",
         help="path to model.yaml"
     )
@@ -461,7 +485,7 @@ if __name__ == "__main__":
         "-t", 
         "--train_config", 
         type=str, 
-        required=True, 
+        # required=True, 
         default = "./config/LibriTTS/train.yaml",
         help="path to train.yaml"
     )
