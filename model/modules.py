@@ -134,7 +134,7 @@ class VarianceAdaptor(nn.Module):
         else:
             duration_rounded = torch.clamp((torch.round(torch.exp(log_duration_prediction) - 1) * d_control), min=0,)
             x, mel_len = self.length_regulator(x, duration_rounded, max_len)
-            mel_mask = get_mask_from_lengths(mel_len)
+            mel_mask = get_mask_from_lengths(mel_len.to(device)) ## cuda:0 and cpu Error! -> to(device)
 
         ### frame level!: we dont care 
         if self.pitch_feature_level == "frame_level":
