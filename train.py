@@ -1,10 +1,9 @@
-######## Gihutb[train.py]: https://github.com/ming024/FastSpeech2/blob/master/train.py ###########
-
 import os
 import yaml
 import gc 
 
-import numpy 
+import numpy as np
+# import pandas as pd
 
 import matplotlib.pyplot as plt
 
@@ -459,12 +458,6 @@ if __name__ == "__main__":
     ## configs ?
     ## why? /home/heiscold/fs2/config/LibriTTS
 
-    ## Train_t01
-    # CUDA_VISIBLE_DEVICES=0 python3 train.py -p ./config/LibriTTS/preprocess.yaml -m ./config/LibriTTS/model.yaml -t ./config/LibriTTS/train.yaml
-
-    ## Train_t01_dot_6
-    # CUDA_VISIBLE_DEVICES=0 python3 train.py --restore_step 600000 --n_epochs 75 --save_epochs 20 --synthesis_logging_epochs 20 --try_name Train_t01_part2
-   
     parser.add_argument(
         "-p",
         "--preprocess_config",
@@ -504,3 +497,6 @@ if __name__ == "__main__":
     configs = (preprocess_config, model_config, train_config)
 
     main(args, configs)
+    # CUDA_VISIBLE_DEVICES=0 python3 train.py -p ./config/LibriTTS/preprocess.yaml -m ./config/LibriTTS/model.yaml -t ./config/LibriTTS/train.yaml
+    # CUDA_VISIBLE_DEVICES=0 python3 train.py --restore_step 600000 --n_epochs 75 --save_epochs 20 --synthesis_logging_epochs 20 --try_name Train_t01_part2
+    # CUDA_VISIBLE_DEVICES=1 python3 train.py --n_epochs 900 --save_epochs 50 --synthesis_logging_epochs 30 --try_name T2_1
