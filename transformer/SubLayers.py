@@ -54,8 +54,16 @@ class MultiHeadAttention(nn.Module):
         self.d_v = d_model // n_head
 
         self.linear_dim = (d_model, d_model)
-        self.linears = nn.ModuleList([copy.deepcopy( nn.Linear(*self.linear_dim) ) for _ in range(4)])
-        self.w_qs, self.w_ks, self.w_vs, self.fc = self.linears  
+        
+        ## This NEW
+        self.w_qs, self.w_ks, self.w_vs, self.fc = [copy.deepcopy( nn.Linear(*self.linear_dim) ) for _ in range(4)]
+        self.linears = nn.ModuleList([self.w_qs, self.w_ks, self.w_vs, self.fc])
+
+        ## This is Before
+        # self.linears = nn.ModuleList([copy.deepcopy( nn.Linear(*self.linear_dim) ) for _ in range(4)])
+        # self.w_qs, self.w_ks, self.w_vs, self.fc = self.linears  
+
+        ## Original
         # self.fc = nn.Linear(*self.linear_dim)
         # self.fc = nn.Linear(n_head * d_v, d_model)
 
