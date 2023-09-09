@@ -211,6 +211,7 @@ finals = [
     "vn5",
 ]
 
+## This is GERMAN
 ## New: from TextGrids by MFA
 part1 = ['@ɔ', '@tʰ', '@ɐ', '@t', '@iː', '@ə', '@ŋ', '@v', '@l̩', '@ç', '@x', '@ʊ', '@ɔʏ']
 part2 = ['@uː', '@aj', '@ʏ', '@ɟ', '@yː', '@pf', '@l', '@h', '@f', '@ʁ', '@k', '@ɛ', '@ɪ', '@ʃ']
@@ -278,6 +279,43 @@ filtered_ones = list(set(part__1 + part__2 + part__3 + part__4 + part__5 + part_
 filtered_ones = ["@" + s for s in filtered_ones ]
 # print(len(filtered_ones))
 # filtered_ones[:10]
+
+## This is French
+fr_part_1 =  ['ø', 'œ', 'c', 'ɑ̃', 'mʲ', 'ʃ', 'b', 'ɲ', 'u', 'n']
+fr_part_2 =  ['l', 'tʃ', 's', 'a', 'ɛ', 'j', 'ʁ', 'o', 't', 'ɟ']
+fr_part_3 =  ['dʒ', 'ʒ', 'p', 'k', 'ʎ', 'ɛ̃', 'w', 'ɔ', 'z', 'spn']
+fr_part_4 =  ['ɡ', 'ɥ', 'y', 'i', 'v', 'ɔ̃', 'm', 'e', 'ə', 'ɑ']
+fr_part_5 =  ['d', 'ts', 'f', 'ŋ']
+
+fr_total_phones = list(set(fr_part_1 + fr_part_2 + fr_part_3 + fr_part_4 + fr_part_5 ))
+# len(fr_total_phones) ## 44
+
+## This is Polish
+pol_part_1 =  ['k', 's̪', 'l', 't̪', 'tʂ', 'ʐ', 'p', 'u', 'ɟ', 'ɛ̃', 'd̪z̪']
+pol_part_2 =  ['tɕ', 'pʲ', 'ŋ', 'x', 'z̪', 'ʑ', 'tʲ', 'rʲ', 'i', 'w', 'mʲ']
+pol_part_3 =  ['ɔ̃', 'dʐ', 'ʂ', 'm', 'v', 'ɨ', 'ɲ', 'ʎ', 'bʲ', 'dʑ', 'a']
+pol_part_4 =  ['fʲ', 'b', 'j̃', 'n̪', 'ɛ', 'f', 'ʔ', 't̪s̪', 'ɔ', 'j', 'd̪']
+pol_part_5 =  ['c', 'ç', 'ɕ', 'ɡ', 'vʲ', 'spn', 'r']
+
+pol_total_phones = list(set(pol_part_1 + pol_part_2 + pol_part_3 + pol_part_4 + pol_part_5 ) )
+# len(pol_total_phones) ## 51
+
+## This is Portuguese
+port_part_1 =  ['ɐ̃', 'z', 'x', 'a', 'ɟ', 'spn', 'ʁ', 'ɡ', 't', 'ʎ', 's', 'ʃ']
+port_part_2 =  ['β', 'u', 'tʃ', 'p', 'i', 'w', 'j', 'ɣ', 'õ', 'j̃', 'v', 'w̃']
+port_part_3 =  ['ɛ', 'n', 'd', 'k', 'l', 'b', 'ĩ', 'dʒ', 'm', 'ɔ', 'ɨ', 'e']
+port_part_4 =  ['ʒ', 'c', 'o', 'ũ', 'f', 'ɾ', 'ð', 'ẽ', 'ɲ', 'ɐ']
+
+port_total_phones = list(set(port_part_1 + port_part_2 + port_part_3 + port_part_4  ))
+# len(port_total_phones) ## 46
+
+## This is Spanish
+spa_part_1 =  ['ŋ', 'j', 'a', 'p', 'e', 'b', 'w', 'β', 'ɟ', 'ɟʝ', 'ɾ', 'l']
+spa_part_2 =  ['m', 'f', 'r', 'd̪', 'k', 's', 'x', 'ɡ', 'o', 'ð', 'ʝ', 'i']
+spa_part_3 =  ['θ', 'spn', 'ɲ', 'u', 'tʃ', 'ɣ', 'ʎ', 'ç', 'n', 'ʃ', 't̪', 'c']
+
+spa_total_phones = list(set(spa_part_1 + spa_part_2 + spa_part_3  ))
+# len(spa_total_phones) ## 36
 
 
 valid_symbols = initials + finals + ["rr"]
