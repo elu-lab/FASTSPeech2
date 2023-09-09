@@ -340,4 +340,8 @@ spa_total_phones = ["@" + s for s in spa_total_phones ]
 
 valid_symbols = initials + finals + ["rr"]
 
-valid_symbols2 = list( set( ipa_total_symbols + filtered_ones + ger_total_phones ) )
+# valid_symbols2 = list( set( ipa_total_symbols + filtered_ones + ger_total_phones ) ) 
+### len(symbols): 783
+
+valid_symbols2 = list( set( ipa_total_symbols + filtered_ones + ger_total_phones + fr_total_phones + en_total_phones + pol_total_phones + port_total_phones + spa_total_phones) )
+### len(symbols): 825 ## Actually 42 added 
