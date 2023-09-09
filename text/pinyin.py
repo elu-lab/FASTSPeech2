@@ -211,20 +211,6 @@ finals = [
     "vn5",
 ]
 
-## This is GERMAN
-## New: from TextGrids by MFA
-part1 = ['@ɔ', '@tʰ', '@ɐ', '@t', '@iː', '@ə', '@ŋ', '@v', '@l̩', '@ç', '@x', '@ʊ', '@ɔʏ']
-part2 = ['@uː', '@aj', '@ʏ', '@ɟ', '@yː', '@pf', '@l', '@h', '@f', '@ʁ', '@k', '@ɛ', '@ɪ', '@ʃ']
-part3 = ['@aw', '@aː', '@œ', '@eː', '@ts', '@tʃ', '@oː', '@kʰ', '@z', '@j', '@s', '@pʰ', '@ɲ', '@cʰ']
-part4 = ['@a', '@n̩', '@øː', '@c', '@n', '@d', '@p', '@b', '@m', '@m̩', '@ɡ']
-
-## manually added
-part5 = [ '@l̥', '@œ̃', '@a̠', '@aɪ', '@it', '@eː', '@in', 'ˈu', '@ɤ̆', '@aŋ', '@t͡', '@ŋ͡', '@oː', '@˦˨', '@ˈi', '@əɫ', '@o̞', '@ˈo', '@ɐ̃', '@aː', '@n̪', '@ɛ̝', '@i̯' ]
-part6 = [ '@t̪', '@l̪', '@w̃', '@d̪', '@j̃', '@ˈe', '@ʃt', '@az', '@ɔs', '@ɔɫ', '@ɔɕ', '@ɾt', '@iˈ', '@kw', '@ɐm', '@ɪg', '@͡p']
-part7 = [ '@ẽː', '@ɛː', '@ɜː', '@ˈɛ', '@t̪', '@l̪', '@w̃', '@d̪', '@ap', '@jo', '@j̃', '@ˈs', '@k̚']
-
-from_tgs = list( set( part1 + part2 + part3 + part4 + part5 + part6 + part7) )
-
 ### this is from ipa dataset
 ## https://github.com/AdamSteffanick/ipa-data/blob/master/guid-o-matic/ipa-data/ipa-data.csv
 part_1 =  ['p', 'b', 't', 'd', 'ʈ', 'ɖ', 'c', 'ɟ', 'k', 'ɡ', 'q', 'ɢ', 'ʔ', 'm', 'ɱ']
@@ -280,11 +266,26 @@ filtered_ones = ["@" + s for s in filtered_ones ]
 # print(len(filtered_ones))
 # filtered_ones[:10]
 
+## This is GERMAN
+## New: from TextGrids by MFA
+part1 = ['@ɔ', '@tʰ', '@ɐ', '@t', '@iː', '@ə', '@ŋ', '@v', '@l̩', '@ç', '@x', '@ʊ', '@ɔʏ']
+part2 = ['@uː', '@aj', '@ʏ', '@ɟ', '@yː', '@pf', '@l', '@h', '@f', '@ʁ', '@k', '@ɛ', '@ɪ', '@ʃ']
+part3 = ['@aw', '@aː', '@œ', '@eː', '@ts', '@tʃ', '@oː', '@kʰ', '@z', '@j', '@s', '@pʰ', '@ɲ', '@cʰ']
+part4 = ['@a', '@n̩', '@øː', '@c', '@n', '@d', '@p', '@b', '@m', '@m̩', '@ɡ']
+
+## manually added
+part5 = [ '@l̥', '@œ̃', '@a̠', '@aɪ', '@it', '@eː', '@in', 'ˈu', '@ɤ̆', '@aŋ', '@t͡', '@ŋ͡', '@oː', '@˦˨', '@ˈi', '@əɫ', '@o̞', '@ˈo', '@ɐ̃', '@aː', '@n̪', '@ɛ̝', '@i̯' ]
+part6 = [ '@t̪', '@l̪', '@w̃', '@d̪', '@j̃', '@ˈe', '@ʃt', '@az', '@ɔs', '@ɔɫ', '@ɔɕ', '@ɾt', '@iˈ', '@kw', '@ɐm', '@ɪg', '@͡p']
+part7 = [ '@ẽː', '@ɛː', '@ɜː', '@ˈɛ', '@t̪', '@l̪', '@w̃', '@d̪', '@ap', '@jo', '@j̃', '@ˈs', '@k̚']
+
+ger_total_phones = list( set( part1 + part2 + part3 + part4 + part5 + part6 + part7) )
+# ger_total_phones = ["@" + s for s in ger_total_phones ]
+
 
 ## This is English
 en_part_1 =  ['ɛ', 'aj', 'mʲ', 'n', 'ɜː', 'vʷ', 'tʲ', 'dʲ', 'ɾ̃', 'ɒː', 'fʲ', 'ɔj']
 en_part_2 =  ['cʷ', 'k', 'ɛː', 'ɟ', 'ow', 'h', 'ʎ', 'iː', 'ɔ', 'pʷ', 'ɐ', 'tʃ']
-en_part_3 =  ['ɝ', 'ɡʷ', 'ʃ', 'm', 'ʉː', 'ç', 'bʲ', 'vʲ', 'spn', 't̪', 'm̩', 'ej']
+en_part_3 =  ['ɝ', 'ɡʷ', 'ʃ', 'm', 'ʉː', 'ç', 'bʲ', 'vʲ', 't̪', 'm̩', 'ej'] # 'spn',
 en_part_4 =  ['e', 'i', 'ʒ', 't', 'ð', 'ʔ', 'f', 'ɹ', 'ɪ', 'd̪', 'aw', 'ɾ']
 en_part_5 =  ['kʷ', 'p', 'ɲ', 'd', 'ɾʲ', 'tʷ', 'b', 'c', 'ɟʷ', 'uː', 'aː', 'w']
 en_part_6 =  ['ɫ̩', 'pʰ', 'pʲ', 'l', 'a', 'o', 'əw', 'kʰ', 'ʉ', 'z', 'ŋ', 'ʊ']
@@ -292,16 +293,18 @@ en_part_7 =  ['ɡ', 'cʰ', 'ə', 'θ', 'æ', 'u', 'n̩', 'ɑː', 's', 'ɫ', 'ɑ'
 en_part_8 =  ['dʒ', 'tʰ', 'v', 'ɚ', 'ɒ', 'ɜ']
 
 en_total_phones = list(set(en_part_1 + en_part_2 + en_part_3 + en_part_4 + en_part_5 + en_part_6 + en_part_7 + en_part_8 ))
+en_total_phones = ["@" + s for s in en_total_phones ]
 # len(en_total_phones) ## 90
 
 ## This is French
 fr_part_1 =  ['ø', 'œ', 'c', 'ɑ̃', 'mʲ', 'ʃ', 'b', 'ɲ', 'u', 'n']
 fr_part_2 =  ['l', 'tʃ', 's', 'a', 'ɛ', 'j', 'ʁ', 'o', 't', 'ɟ']
-fr_part_3 =  ['dʒ', 'ʒ', 'p', 'k', 'ʎ', 'ɛ̃', 'w', 'ɔ', 'z', 'spn']
+fr_part_3 =  ['dʒ', 'ʒ', 'p', 'k', 'ʎ', 'ɛ̃', 'w', 'ɔ', 'z'] # 'spn']
 fr_part_4 =  ['ɡ', 'ɥ', 'y', 'i', 'v', 'ɔ̃', 'm', 'e', 'ə', 'ɑ']
 fr_part_5 =  ['d', 'ts', 'f', 'ŋ']
 
 fr_total_phones = list(set(fr_part_1 + fr_part_2 + fr_part_3 + fr_part_4 + fr_part_5 ))
+fr_total_phones = ["@" + s for s in fr_total_phones ]
 # len(fr_total_phones) ## 44
 
 ## This is Polish
@@ -309,29 +312,32 @@ pol_part_1 =  ['k', 's̪', 'l', 't̪', 'tʂ', 'ʐ', 'p', 'u', 'ɟ', 'ɛ̃', 'd̪
 pol_part_2 =  ['tɕ', 'pʲ', 'ŋ', 'x', 'z̪', 'ʑ', 'tʲ', 'rʲ', 'i', 'w', 'mʲ']
 pol_part_3 =  ['ɔ̃', 'dʐ', 'ʂ', 'm', 'v', 'ɨ', 'ɲ', 'ʎ', 'bʲ', 'dʑ', 'a']
 pol_part_4 =  ['fʲ', 'b', 'j̃', 'n̪', 'ɛ', 'f', 'ʔ', 't̪s̪', 'ɔ', 'j', 'd̪']
-pol_part_5 =  ['c', 'ç', 'ɕ', 'ɡ', 'vʲ', 'spn', 'r']
+pol_part_5 =  ['c', 'ç', 'ɕ', 'ɡ', 'vʲ', 'r'] # 'spn',
 
 pol_total_phones = list(set(pol_part_1 + pol_part_2 + pol_part_3 + pol_part_4 + pol_part_5 ) )
+pol_total_phones = ["@" + s for s in pol_total_phones ]
 # len(pol_total_phones) ## 51
 
 ## This is Portuguese
-port_part_1 =  ['ɐ̃', 'z', 'x', 'a', 'ɟ', 'spn', 'ʁ', 'ɡ', 't', 'ʎ', 's', 'ʃ']
+port_part_1 =  ['ɐ̃', 'z', 'x', 'a', 'ɟ', 'ʁ', 'ɡ', 't', 'ʎ', 's', 'ʃ'] # 'spn',
 port_part_2 =  ['β', 'u', 'tʃ', 'p', 'i', 'w', 'j', 'ɣ', 'õ', 'j̃', 'v', 'w̃']
 port_part_3 =  ['ɛ', 'n', 'd', 'k', 'l', 'b', 'ĩ', 'dʒ', 'm', 'ɔ', 'ɨ', 'e']
 port_part_4 =  ['ʒ', 'c', 'o', 'ũ', 'f', 'ɾ', 'ð', 'ẽ', 'ɲ', 'ɐ']
 
-port_total_phones = list(set(port_part_1 + port_part_2 + port_part_3 + port_part_4  ))
+port_total_phones = list(set(port_part_1 + port_part_2 + port_part_3 + port_part_4 ) )
+port_total_phones = ["@" + s for s in port_total_phones ]
 # len(port_total_phones) ## 46
 
 ## This is Spanish
 spa_part_1 =  ['ŋ', 'j', 'a', 'p', 'e', 'b', 'w', 'β', 'ɟ', 'ɟʝ', 'ɾ', 'l']
 spa_part_2 =  ['m', 'f', 'r', 'd̪', 'k', 's', 'x', 'ɡ', 'o', 'ð', 'ʝ', 'i']
-spa_part_3 =  ['θ', 'spn', 'ɲ', 'u', 'tʃ', 'ɣ', 'ʎ', 'ç', 'n', 'ʃ', 't̪', 'c']
+spa_part_3 =  ['θ', 'ɲ', 'u', 'tʃ', 'ɣ', 'ʎ', 'ç', 'n', 'ʃ', 't̪', 'c'] # 'spn', 
 
-spa_total_phones = list(set(spa_part_1 + spa_part_2 + spa_part_3  ))
+spa_total_phones = list(set(spa_part_1 + spa_part_2 + spa_part_3 ) )
+spa_total_phones = ["@" + s for s in spa_total_phones ]
 # len(spa_total_phones) ## 36
 
 
 valid_symbols = initials + finals + ["rr"]
 
-valid_symbols2 = list( set( from_tgs + ipa_total_symbols + filtered_ones) )
+valid_symbols2 = list( set( ipa_total_symbols + filtered_ones + ger_total_phones ) )
