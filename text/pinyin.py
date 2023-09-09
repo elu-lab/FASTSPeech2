@@ -280,6 +280,20 @@ filtered_ones = ["@" + s for s in filtered_ones ]
 # print(len(filtered_ones))
 # filtered_ones[:10]
 
+
+## This is English
+en_part_1 =  ['ɛ', 'aj', 'mʲ', 'n', 'ɜː', 'vʷ', 'tʲ', 'dʲ', 'ɾ̃', 'ɒː', 'fʲ', 'ɔj']
+en_part_2 =  ['cʷ', 'k', 'ɛː', 'ɟ', 'ow', 'h', 'ʎ', 'iː', 'ɔ', 'pʷ', 'ɐ', 'tʃ']
+en_part_3 =  ['ɝ', 'ɡʷ', 'ʃ', 'm', 'ʉː', 'ç', 'bʲ', 'vʲ', 'spn', 't̪', 'm̩', 'ej']
+en_part_4 =  ['e', 'i', 'ʒ', 't', 'ð', 'ʔ', 'f', 'ɹ', 'ɪ', 'd̪', 'aw', 'ɾ']
+en_part_5 =  ['kʷ', 'p', 'ɲ', 'd', 'ɾʲ', 'tʷ', 'b', 'c', 'ɟʷ', 'uː', 'aː', 'w']
+en_part_6 =  ['ɫ̩', 'pʰ', 'pʲ', 'l', 'a', 'o', 'əw', 'kʰ', 'ʉ', 'z', 'ŋ', 'ʊ']
+en_part_7 =  ['ɡ', 'cʰ', 'ə', 'θ', 'æ', 'u', 'n̩', 'ɑː', 's', 'ɫ', 'ɑ', 'j']
+en_part_8 =  ['dʒ', 'tʰ', 'v', 'ɚ', 'ɒ', 'ɜ']
+
+en_total_phones = list(set(en_part_1 + en_part_2 + en_part_3 + en_part_4 + en_part_5 + en_part_6 + en_part_7 + en_part_8 ))
+# len(en_total_phones) ## 90
+
 ## This is French
 fr_part_1 =  ['ø', 'œ', 'c', 'ɑ̃', 'mʲ', 'ʃ', 'b', 'ɲ', 'u', 'n']
 fr_part_2 =  ['l', 'tʃ', 's', 'a', 'ɛ', 'j', 'ʁ', 'o', 't', 'ɟ']
