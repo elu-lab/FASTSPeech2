@@ -340,4 +340,4 @@ spa_totals = ["@" + s for s in spa_total_phones ]
 
 valid_symbols = initials + finals + ["rr"]
 
-valid_symbols2 = list( set(ipa_totals + filters + ger_totals) )
+valid_symbols2 = list( set( ipa_totals + filters + ger_totals ) )
