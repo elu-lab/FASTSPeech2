@@ -13,7 +13,7 @@ import torch.nn.functional as F
 
 from utils.tools import get_mask_from_lengths, pad
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 ######################## About Inputs #########################
@@ -31,10 +31,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class VarianceAdaptor(nn.Module):
     """Variance Adaptor"""
 
-    def __init__(self, preprocess_config, model_config):
+    def __init__(self, preprocess_config, model_config, device):
         super(VarianceAdaptor, self).__init__()
+        self.device = device
         self.duration_predictor = VariancePredictor(model_config)
-        self.length_regulator = LengthRegulator()
+        self.length_regulator = LengthRegulator(device = self.device)
         self.pitch_predictor = VariancePredictor(model_config)
         self.energy_predictor = VariancePredictor(model_config)
 
@@ -134,7 +135,8 @@ class VarianceAdaptor(nn.Module):
         else:
             duration_rounded = torch.clamp((torch.round(torch.exp(log_duration_prediction) - 1) * d_control), min=0,)
             x, mel_len = self.length_regulator(x, duration_rounded, max_len)
-            mel_mask = get_mask_from_lengths(mel_len.to(device)) ## cuda:0 and cpu Error! -> to(device)
+            # mel_mask = get_mask_from_lengths(mel_len.to(device)) ## cuda:0 and cpu Error! -> to(device)
+            mel_mask = get_mask_from_lengths(mel_len)
 
         ### frame level!: we dont care 
         if self.pitch_feature_level == "frame_level":
@@ -240,8 +242,9 @@ class Conv(nn.Module):
 class LengthRegulator(nn.Module):
     """Length Regulator"""
 
-    def __init__(self):
+    def __init__(self, device):
         super(LengthRegulator, self).__init__()
+        self.device = device
 
     def LR(self, x, duration, max_len):
         ## x: enc_output from Encoder # (torch.Size([16, 85, 256])
@@ -269,7 +272,7 @@ class LengthRegulator(nn.Module):
             output = pad(output)
 
         ## output: [16, 1465, 256]
-        return output, torch.LongTensor(mel_len).to(device)
+        return output, torch.LongTensor(mel_len).to(self.device)
 
     def expand(self, batch, predicted):
         ## batch: expanded: [598, 256]
