@@ -309,7 +309,7 @@ class Preprocessor:
         # tg_base_path = f"/data/speech-data/mls-align/mls_{lang}_opus/train/"
       
         # self.lang = 'german'
-        tg_base_path = f"/data/speech-data/mls-align/mls_{self.lang}_opus/train/"
+        tg_base_path = f"/nfs/data/speech-data/mls-align/mls_{self.lang}_opus/train/"
 
         # for i, speaker in enumerate(tqdm(os.listdir(in_dir))):
         # for i, row in self.df.iterrows():
