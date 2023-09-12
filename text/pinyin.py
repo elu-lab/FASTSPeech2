@@ -242,7 +242,7 @@ part_22 = [  '᷄', '᷅', '᷈', '𝆑', '𝆑𝆑', '𝆏', '𝆏𝆏', '𝑎�
 ipa_total_symbols = list( set( part_1 + part_2 + part_3 + part_4 + part_5 + part_6 + part_7 +  part_8 + part_9 + part_10) )
 ipa_total_symbols = ipa_total_symbols + list( set( part_11 + part_12 + part_13 + part_14 + part_15 + part_16 + part_17 +  part_18 + part_19 + part_20 + part_21 ) )
 ipa_total_symbols = list(set(ipa_total_symbols ))
-ipa_total_symbols = ["@" + s for s in ipa_total_symbols]
+ipa_totals = ["@" + s for s in ipa_total_symbols]
 
 ### This is from spvocab.vocab (prof)
 ### phones whose phsone[0] == "_" are too many (6584) -> Temporary exclueded
@@ -262,7 +262,7 @@ part__13 =  ['˧', '̀', 'ø', 'ɘ', 'ʄ', 'ˑ', 'œ', 'ʉ', 'ɔ', 'ˀ', 'î', '
 
 
 filtered_ones = list(set(part__1 + part__2 + part__3 + part__4 + part__5 + part__6 + part__13 + part__7 + part__8 + part__9 + part__10 + part__11 + part__12 ))
-filtered_ones = ["@" + s for s in filtered_ones ]
+filters = ["@" + s for s in filtered_ones ]
 # print(len(filtered_ones))
 # filtered_ones[:10]
 
@@ -278,7 +278,7 @@ part5 = [ '@l̥', '@œ̃', '@a̠', '@aɪ', '@it', '@eː', '@in', 'ˈu', '@ɤ̆',
 part6 = [ '@t̪', '@l̪', '@w̃', '@d̪', '@j̃', '@ˈe', '@ʃt', '@az', '@ɔs', '@ɔɫ', '@ɔɕ', '@ɾt', '@iˈ', '@kw', '@ɐm', '@ɪg', '@͡p']
 part7 = [ '@ẽː', '@ɛː', '@ɜː', '@ˈɛ', '@t̪', '@l̪', '@w̃', '@d̪', '@ap', '@jo', '@j̃', '@ˈs', '@k̚']
 
-ger_total_phones = list( set( part1 + part2 + part3 + part4 + part5 + part6 + part7) )
+ger_totals = list( set( part1 + part2 + part3 + part4 + part5 + part6 + part7) )
 # ger_total_phones = ["@" + s for s in ger_total_phones ]
 
 
@@ -293,7 +293,7 @@ en_part_7 =  ['ɡ', 'cʰ', 'ə', 'θ', 'æ', 'u', 'n̩', 'ɑː', 's', 'ɫ', 'ɑ'
 en_part_8 =  ['dʒ', 'tʰ', 'v', 'ɚ', 'ɒ', 'ɜ']
 
 en_total_phones = list(set(en_part_1 + en_part_2 + en_part_3 + en_part_4 + en_part_5 + en_part_6 + en_part_7 + en_part_8 ))
-en_total_phones = ["@" + s for s in en_total_phones ]
+en_totals = ["@" + s for s in en_total_phones ]
 # len(en_total_phones) ## 90
 
 ## This is French
@@ -304,7 +304,7 @@ fr_part_4 =  ['ɡ', 'ɥ', 'y', 'i', 'v', 'ɔ̃', 'm', 'e', 'ə', 'ɑ']
 fr_part_5 =  ['d', 'ts', 'f', 'ŋ']
 
 fr_total_phones = list(set(fr_part_1 + fr_part_2 + fr_part_3 + fr_part_4 + fr_part_5 ))
-fr_total_phones = ["@" + s for s in fr_total_phones ]
+fr_totals = ["@" + s for s in fr_total_phones ]
 # len(fr_total_phones) ## 44
 
 ## This is Polish
@@ -315,7 +315,7 @@ pol_part_4 =  ['fʲ', 'b', 'j̃', 'n̪', 'ɛ', 'f', 'ʔ', 't̪s̪', 'ɔ', 'j', '
 pol_part_5 =  ['c', 'ç', 'ɕ', 'ɡ', 'vʲ', 'r'] # 'spn',
 
 pol_total_phones = list(set(pol_part_1 + pol_part_2 + pol_part_3 + pol_part_4 + pol_part_5 ) )
-pol_total_phones = ["@" + s for s in pol_total_phones ]
+pol_totals = ["@" + s for s in pol_total_phones ]
 # len(pol_total_phones) ## 51
 
 ## This is Portuguese
@@ -325,7 +325,7 @@ port_part_3 =  ['ɛ', 'n', 'd', 'k', 'l', 'b', 'ĩ', 'dʒ', 'm', 'ɔ', 'ɨ', 'e
 port_part_4 =  ['ʒ', 'c', 'o', 'ũ', 'f', 'ɾ', 'ð', 'ẽ', 'ɲ', 'ɐ']
 
 port_total_phones = list(set(port_part_1 + port_part_2 + port_part_3 + port_part_4 ) )
-port_total_phones = ["@" + s for s in port_total_phones ]
+port_totals = ["@" + s for s in port_total_phones ]
 # len(port_total_phones) ## 46
 
 ## This is Spanish
@@ -334,14 +334,10 @@ spa_part_2 =  ['m', 'f', 'r', 'd̪', 'k', 's', 'x', 'ɡ', 'o', 'ð', 'ʝ', 'i']
 spa_part_3 =  ['θ', 'ɲ', 'u', 'tʃ', 'ɣ', 'ʎ', 'ç', 'n', 'ʃ', 't̪', 'c'] # 'spn', 
 
 spa_total_phones = list(set(spa_part_1 + spa_part_2 + spa_part_3 ) )
-spa_total_phones = ["@" + s for s in spa_total_phones ]
+spa_totals = ["@" + s for s in spa_total_phones ]
 # len(spa_total_phones) ## 36
 
 
 valid_symbols = initials + finals + ["rr"]
 
-# valid_symbols2 = list( set( ipa_total_symbols + filtered_ones + ger_total_phones ) ) 
-### len(symbols): 783
-
-valid_symbols2 = list( set( ipa_total_symbols + filtered_ones + ger_total_phones + fr_total_phones + en_total_phones + pol_total_phones + port_total_phones + spa_total_phones) )
-### len(symbols): 825 ## Actually 42 added 
+valid_symbols2 = list( set(ipa_totals + filters + ger_totals) )
