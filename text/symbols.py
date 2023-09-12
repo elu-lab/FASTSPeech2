@@ -27,8 +27,8 @@ symbols = (
     + list(_special)
     + list(_punctuation)
     + list(_letters)
-    + _arpabet
-    + _pinyin
+    # + _arpabet
+    # + _pinyin
     + _pinyin2
     # + list(_letters_ipa) ## added @ pinyin.py or not
     + _silences
