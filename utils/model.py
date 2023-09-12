@@ -19,7 +19,7 @@ from model.optimizer import *
 def get_model(args, configs, device, train=False):
     (preprocess_config, model_config, train_config) = configs
 
-    model = FastSpeech2(preprocess_config, model_config).to(device)
+    model = FastSpeech2(preprocess_config, model_config, device).to(device)
     if args is not None and args.restore_step:
         ckpt_path = os.path.join(train_config["path"]["ckpt_path"], "model_{}.pth".format(args.restore_step),)
         ckpt = torch.load(ckpt_path, map_location=device)
