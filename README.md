@@ -3,7 +3,7 @@
 
 
 ## wandb [![wandb](https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-gradient.svg)](https://wandb.ai/wako/FastSpeech2_german)
- If you wanna see the training status, you can check here. You can check theses things above wandb link:
+ If you wanna see the training status, you can check here. You can check theses things above [`wandb link`](https://wandb.ai/wako/FastSpeech2_german):
 - Listen to the Samples(= Label Speech & predicted Speech)
 - Training / Eval's Mel-Spectrogram
 
