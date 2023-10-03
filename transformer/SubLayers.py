@@ -46,26 +46,23 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, n_head = 2, d_model=256, d_k = None, d_v =  None, dropout=0.1):
         super().__init__()
         assert d_model % n_head == 0
-        self.head_dim = d_model // n_head
         self.n_head = n_head
-        # self.d_k = d_k
-        # self.d_v = d_v
+        self.head_dim = d_model // n_head
         self.d_k = d_model // n_head
         self.d_v = d_model // n_head
+        # self.d_k = d_k ## Original
+        # self.d_v = d_v ## Original
 
         self.linear_dim = (d_model, d_model)
-        
-        ## This NEW
+
+        ## NEW
         self.w_qs, self.w_ks, self.w_vs, self.fc = [copy.deepcopy( nn.Linear(*self.linear_dim) ) for _ in range(4)]
         self.linears = nn.ModuleList([self.w_qs, self.w_ks, self.w_vs, self.fc])
 
-        ## This is Before
+        ## Before
         # self.linears = nn.ModuleList([copy.deepcopy( nn.Linear(*self.linear_dim) ) for _ in range(4)])
-        # self.w_qs, self.w_ks, self.w_vs, self.fc = self.linears  
-
-        ## Original
+        # self.w_qs, self.w_ks, self.w_vs, _ = self.linears  
         # self.fc = nn.Linear(*self.linear_dim)
-        # self.fc = nn.Linear(n_head * d_v, d_model)
 
         self.attention = ScaledDotProductAttention(temperature = np.power(self.head_dim, 0.5))
         self.layer_norm = nn.LayerNorm(d_model)
@@ -81,15 +78,20 @@ class MultiHeadAttention(nn.Module):
 
         mask = mask.repeat(self.n_head, 1, 1)  # (n*b) x .. x ..
         output, attn = self.attention(q, k, v, mask=mask)
+        ## output: [bs * n_head, len_input, head_dim(=d_q = d_k = d_v)]
+        ## attn  : [bs * n_head, len_input, len_input]
 
-        ## output: [bs * n_head, len_input, head_dim] -> [ bs, n_head, len_input, head_dim]
-        ##          -> [n_head, bs, len_input, head_dim] -> [bs, len_input, ]
+        ## output: [bs * n_head, len_input, head_dim]
+        ##          -> [n_head, bs, len_input, head_dim] 
+        ##          -> [bs, len_input, n_head, head_dim] 
+        ##          -> [bs, len_input, d_model( = n_head * head_dim)]
         output = output.view(self.n_head, -1, len_input, self.head_dim).permute(1, 2, 0, 3).contiguous().view(bs, len_input, -1) # b x lq x (n*dv)
 
         output = self.dropout(self.fc(output))
         output = self.layer_norm(output + residual)
 
         return output, attn
+    
 
 
 class PositionwiseFeedForward(nn.Module):
