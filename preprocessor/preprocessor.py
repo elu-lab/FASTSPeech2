@@ -121,8 +121,8 @@ class Preprocessor:
             p25 = np.percentile(values, 25)
             p75 = np.percentile(values, 75)
             
-        p25 = np.percentile(values, 25)
-        p75 = np.percentile(values, 75)
+        # p25 = np.percentile(values, 25)
+        # p75 = np.percentile(values, 75)
         lower = p25 - 1.5 * (p75 - p25)
         upper = p75 + 1.5 * (p75 - p25)
         normal_indices = np.logical_and(values > lower, values < upper)
