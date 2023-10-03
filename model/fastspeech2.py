@@ -63,8 +63,26 @@ class FastSpeech2(nn.Module):
         if self.speaker_emb is not None:
             output = output + self.speaker_emb(speakers).unsqueeze(1).expand(-1, max_src_len, -1)
 
-        (output, p_predictions, e_predictions, log_d_predictions, d_rounded, mel_lens, mel_masks) = self.variance_adaptor( output, src_masks, mel_masks, max_mel_len, p_targets, e_targets, d_targets, p_control, e_control, d_control,)
-
+        
+        (output, 
+         p_predictions, 
+         e_predictions, 
+         log_d_predictions, 
+         d_rounded, 
+         mel_lens,
+         mel_masks
+         ) = self.variance_adaptor( 
+             output, 
+             src_masks, 
+             mel_masks, 
+             max_mel_len, 
+             p_targets, 
+             e_targets, 
+             d_targets, 
+             p_control, 
+             e_control, 
+             d_control,)
+        
         output, mel_masks = self.decoder(output, mel_masks)
         output = self.mel_linear(output)
 
