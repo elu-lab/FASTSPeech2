@@ -440,6 +440,7 @@ mfa_official_british_en= "aj aw b bʲ c cʰ d dʒ dʲ d̪ ej f fʲ h i iː j k k
 mfa_en = mfa_official_british_en.split(" ")
 mfa_en = sorted(['@'+s for s in mfa_en if s != ' ']) ## DOSEN'T WORKED ERROR!! 
 # valid_symbols6 = mfa_en ## n_vocab: 83 (US) // 85 (British)
+
 ## T6_JeBAl
 # valid_symbols6 = sorted(en_totals) # n_vocab: 104
 
@@ -449,7 +450,7 @@ mfa_en = sorted(['@'+s for s in mfa_en if s != ' ']) ## DOSEN'T WORKED ERROR!!
 # https://mfa-models.readthedocs.io/en/latest/dictionary/English/English%20MFA%20dictionary%20v2_2_1.html
 mfa_official_ens_221 = "a aj aw aː b bʲ c cʰ cʷ d dʒ dʲ d̪ e ej f fʲ fʷ h i iː j k kp kʰ kʷ l m mʲ m̩ n n̩ o ow p pʰ pʲ pʷ s t tʃ tʰ tʲ tʷ t̪ u uː v vʲ vʷ w z æ ç ð ŋ ɐ ɑ ɑː ɒ ɒː ɔ ɔj ə əw ɚ ɛ ɛː ɜ ɜː ɝ ɟ ɟʷ ɡ ɡb ɡʷ ɪ ɫ ɫ̩ ɲ ɹ ɾ ɾʲ ɾ̃ ʃ ʉ ʉː ʊ ʎ ʒ ʔ θ"
 mfa_ens221 = sorted(['@'+s for s in mfa_official_ens_221.split(" ") if s != ' '])
-valid_symbols6 = mfa_ens221 ## n_vocab: 83
+valid_symbols6 = mfa_ens221 ## n_vocab: 92 + 15 = 107
 
 
 # ## New: from TextGrids by MFA
