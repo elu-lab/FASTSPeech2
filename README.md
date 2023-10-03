@@ -5,9 +5,9 @@
 ## wandb :waning_gibbous_moon:
  If you wanna see the training status, you can check here [![wandb](https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-gradient.svg)](https://wandb.ai/wako/FastSpeech2_german)
 
- You can check theses things above wandb link:
+You can check theses things above wandb link:
   - Listen to the Samples(= Label Speech & predicted Speech) 
-  - Training / Eval's Mel-Spectrogram 
+  - Training / Eval's Mel-Spectrogram
 
 
 ## References
