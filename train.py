@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 
 # from utils.utils import to_device
 import wandb 
@@ -51,15 +51,18 @@ g_= Fore.GREEN
 sr_ = Style.RESET_ALL
 m_ = Fore.MAGENTA 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def main(args, configs):
 
-    # configs
+    ############
+    # configs #
+    ############
     preprocess_config, model_config, train_config = configs
 
-    ## Set Seed
+    ############
+    # SET SEED #
+    ############
     set_seed(args.seed)
 
     ## Dataset
@@ -67,7 +70,9 @@ def main(args, configs):
     val_dataset = Dataset("val.txt", preprocess_config, train_config, sort=False, drop_last=False)
     print("train_ds, valid_ds: Done")
 
-    ## DataLoader: train_loader, valid_loader
+    ###############
+    # DataLoader  #
+    ###############
     batch_size = train_config["optimizer"]["batch_size"]
     group_size = args.group_size  # Set this larger than 1 to enable sorting in Dataset
     assert batch_size * group_size < len(train_dataset)
@@ -87,36 +92,56 @@ def main(args, configs):
     print("Valid Loader: Done")
     print()
 
-    # Init logger
-    for p in train_config["path"].values():
-        os.makedirs(p, exist_ok=True)
-    train_log_path = os.path.join(train_config["path"]["log_path"], "train")
-    val_log_path = os.path.join(train_config["path"]["log_path"], "val")
-    print(train_log_path, val_log_path)
+    ######################
+    # Tensorboard logger #
+    ######################
+    # for p in train_config["path"].values():
+    #     os.makedirs(p, exist_ok=True)
+    # train_log_path = os.path.join(train_config["path"]["log_path"], "train")
+    # val_log_path = os.path.join(train_config["path"]["log_path"], "val")
+    # print(train_log_path, val_log_path)
 
-    os.makedirs(train_log_path, exist_ok=True)
-    os.makedirs(val_log_path, exist_ok=True)
+    # os.makedirs(train_log_path, exist_ok=True)
+    # os.makedirs(val_log_path, exist_ok=True)
 
-    train_logger = SummaryWriter(train_log_path)
-    val_logger = SummaryWriter(val_log_path)
-    print("Logger is Defined")
-    print()
+    # train_logger = SummaryWriter(train_log_path)
+    # val_logger = SummaryWriter(val_log_path)
+    # print("Logger is Defined")
+    # print()
 
-    # Training
-    step = args.restore_step + 1
+    #######################
+    # step: starting step #
+    #######################
+    if args.restore_step == 0:
+        step = args.restore_step + 1
+    else:
+        step = args.restore_step
     print(f"STEP(START VALUE): {step}")
 
+    ###############################
+    # n_epochs: Numboer of Epochs #
+    ###############################
     n_epochs = args.n_epochs
-    # total_step = train_config["step"]["total_step"] ## original
-    # total_step = n_epochs * len(train_loader) * group_size # 3 
+
+
+    ###############################################################
+    # total_steps: Numboer of Epochs                              #
+    # total_step = train_config["step"]["total_step"] ## original #
+    # total_step = n_epochs * len(train_loader) * group_size # 3  #
+    ###############################################################
     total_step = step + n_epochs * len(train_loader) * group_size if step != 1 else n_epochs * len(train_loader) * group_size
     print(f"Total STEP: {total_step }") ## 661080
+    
+    ###################
+    # Steps per EPoch #
+    ###################
     epoch_step = len(train_loader) * group_size
     print(f"STEPs per EPOCH: {epoch_step }") ## 661080
 
     print(f"N_EPOCHS: {n_epochs}") ## 840
     print(f"BATCH SIZE: {batch_size}") ## 16
     print(f"GROUP SIZE: {group_size}") ## 3
+    print()
 
     grad_acc_step = train_config["optimizer"]["grad_acc_step"]
     print(f"GRAD ACC STEP: {grad_acc_step}")
@@ -129,6 +154,10 @@ def main(args, configs):
 
     save_step = train_config["step"]["save_step"]
     print(f"save STEP: {save_step}")
+
+    print(f"Model Save function Starts @ {args.save_start_step} step")
+    print(f"Model Save function also acts @ LAST? : {args.save_at_last}")
+    print()
 
     save_epoch = args.save_epochs
     save_epoch_steps =  save_epoch * len(train_loader) * group_size 
@@ -150,8 +179,9 @@ def main(args, configs):
     print(f"sampling_rate(=sample_rate): {sampling_rate}")
     print()
 
-    ## Accelerator
-    ## https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
+    ###########################################################################################
+    # Accelerator : https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation #
+    ###########################################################################################
     accelerator = Accelerator(gradient_accumulation_steps = grad_acc_step, log_with="wandb")
 
     ### Model
@@ -169,7 +199,7 @@ def main(args, configs):
     print()
 
     # Load vocoder
-    vocoder, vocoder_train_setup, denoiser = get_vocoder(model_config, torch.device('cpu'))
+    vocoder, vocoder_train_setup, denoiser = get_vocoder(model_config, accelerator.device)
     print("Vocoder Downloaded")
     
     ### To Device
@@ -177,10 +207,9 @@ def main(args, configs):
     print("Accelerate Prepared:")
     ## model cuda? Check!
     print("MODEL IS CUDA? :", next(model.parameters()).is_cuda)
-
-    ## Devices
+    print()
+    ###### Devices #######
     # accelerator.device
-    # print(accelerator.device)
 
     ## wandb 
     ## you should log in (wandb) in cli 
@@ -213,28 +242,29 @@ def main(args, configs):
                 }
             },
         )
+    ##################
+    # Training Start #
+    ##################
 
-    ### Training Start
-    # sample_audios, sample_eval_audios = [], []
-    # figs_train, figs_eval = [], []
-    denoising_strength = 0.005
+    # HiFiGAN - Denoiser
+    denoising_strength = args.denoising_strength # 0.005
+    print(f"Vocoder(=HiFi-GAN)'s denoising_strength: {args.denoising_strength}")
+    print(f"Vocoder(=HiFi-GAN)'s denoising_strength: {denoising_strength}")
 
     ## This is for wandb Audio Added
     preview_table = wandb.Table(columns = ['STEP', 'FROM', 'Label Speech', 'Predicted Speech'])
 
     for epoch in trange(n_epochs, desc='Epoch'):
+        print(f"{g_}================================================= STEPS: [{step}/{total_step}] ================================================={sr_}")
         print(f"{s_}================================================= EPOCH: [{epoch}/{n_epochs}] ================================================={sr_}")
         print("STARTING")
+
         with TorchTracemalloc() as tracemalloc:
             model.train()
             total_loss = 0
-
             inner_bar = tqdm(train_loader, desc="Step", position= 0)
             for batchs in inner_bar:
-            # for batchs in train_loader:
                 for batch in batchs:
-                    ### gradient accumulation: ...???
-                    ### https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
                     with accelerator.accumulate(model):
 
                         batch = to_device(batch, accelerator.device)
@@ -251,48 +281,30 @@ def main(args, configs):
                         # total_loss.backward()
                         
                         accelerator.backward(total_loss)
-                        # Update weights
-                        optimizer.step_and_update_lr()
-                        optimizer.zero_grad()
 
                         # Gradient Clipping
                         accelerator.clip_grad_norm_(model.parameters(), grad_clip_thresh)
 
-                        #### Original #######
-                        # if step % grad_acc_step == 0:
-                        #     # Clipping gradients to avoid gradient explosion
-                        #     # nn.utils.clip_grad_norm_(model.parameters(), grad_clip_thresh)
-                        #     accelerator.clip_grad_norm_(model.parameters(), grad_clip_thresh)
+                        # Update weights
+                        optimizer.step_and_update_lr()
+                        optimizer.zero_grad()
 
-                        #     # Update weights
-                        #     optimizer.step_and_update_lr()
-                        #     optimizer.zero_grad()
                         
-                        ######### Logging
+                        ##################
+                        # Wandb: Logging #
+                        ##################
                         if step % log_step == 0:
                         # if step % (100 * 3) == 0:
                             losses = [l.item() for l in losses]
                             
-                            ### Accelerate - wandb
-                            # total_loss, mel_loss, mel_postnet_loss, pitch_loss, energy_loss, duration_loss = losses
-                            # accelerator.log({"total_loss": total_loss,
-                            #                  "mel_loss": mel_loss,
-                            #                  "mel_postnet_loss": mel_postnet_loss,
-                            #                  "pitch_loss": pitch_loss,
-                            #                  "energy_loss": energy_loss,
-                            #                  "duration_loss": duration_loss }, 
-                            #                  step=step)
-                            
-                            ### Tensorboard
-                            message1 = "Step {}/{}, ".format(step, total_step)
-                            message2 = "Total Loss: {:.4f}, Mel Loss: {:.4f}, Mel PostNet Loss: {:.4f}, Pitch Loss: {:.4f}, Energy Loss: {:.4f}, Duration Loss: {:.4f}".format(*losses)
-                            # print()
-                            print(f"{m_} Train[{message1}]: {message2} {sr_}")
-                            # print()
-                            with open(os.path.join(train_log_path, "log.txt"), "a") as f:
-                                f.write(message1 + message2 + "\n")
-
-                            # log_fn(train_logger, step, losses=losses)
+                            ################# Tensorboard ##################
+                            # message1 = "Step {}/{}, ".format(step, total_step)
+                            # message2 = "Total Loss: {:.4f}, Mel Loss: {:.4f}, Mel PostNet Loss: {:.4f}, Pitch Loss: {:.4f}, Energy Loss: {:.4f}, Duration Loss: {:.4f}".format(*losses)
+                
+                            # print(f"{m_} Train[{message1}]: {message2} {sr_}")
+                            # with open(os.path.join(train_log_path, "log.txt"), "a") as f:
+                            #     f.write(message1 + message2 + "\n")
+                            ##################################################
 
                             ## wandb logging
                             accelerator.log({"Train/Total_loss": losses[0],
@@ -303,10 +315,13 @@ def main(args, configs):
                                             "Train/Duration_loss": losses[5],
                                             }, step=step)
                         
-                        ####### Syntheize Speech Sample 
-                        ## tensoroard audio off
+                         
+
+                        ############################
+                        # Syntheize Speech Sample  #
+                        ############################
                         if step % synth_step == 0 or step % synth_epoch_steps == 0:
-                        # if step % (100*3) == 0:
+
                             fig, wav_reconstruction, wav_prediction, tag = synth_one_sample(
                                 batch,
                                 output,
@@ -318,8 +333,6 @@ def main(args, configs):
                                 denoising_strength,
                             )
                             # mel spectrogram plot 
-                            # figs_train += [fig]
-                            # wandb.log({ 'chart' : wandb.Image(fig) })
                             accelerator.log({ 'Train/Mel_SPectrogram' : wandb.Image(fig) })
 
                             ## wandb Add Audio 
@@ -327,32 +340,16 @@ def main(args, configs):
                             predict_audio = wandb.Audio(wav_prediction, sample_rate = 22050)
                             preview_table.add_data(step, 'TRAIN', label_audio, predict_audio)
 
-                            # sample_audios += [wav_reconstruction, wav_prediction]
 
-                            # log_fn( train_logger,
-                            #         fig=fig,
-                            #         tag="Training/step_{}_{}".format(step, tag),)
-                            
-                            # sampling_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
-
-                            # log_fn( train_logger,
-                            #         audio=wav_reconstruction,
-                            #         sampling_rate=sampling_rate,
-                            #         tag="Training/step_{}_{}_reconstructed".format(step, tag), )
-                            
-                            # log_fn( train_logger,
-                            #         audio=wav_prediction,
-                            #         sampling_rate=sampling_rate,
-                            #         tag="Training/step_{}_{}_synthesized".format(step, tag),)
-                        
+                        ############
+                        # Evaluate #
+                        ############
                         if step % val_step == 0:
-                        # if step % (100*3) == 0:
-                            # print()
                             model.eval()
                             message, fig, sample_audios_from_vals = evaluate_fn( model, 
                                                                                  step, 
                                                                                  configs,
-                                                                                 val_logger, 
+                                                                                 True, # Logging = True
                                                                                  vocoder, 
                                                                                  vocoder_train_setup, 
                                                                                  denoiser, 
@@ -360,10 +357,7 @@ def main(args, configs):
                                                                                  device = accelerator.device,
                                                                                  sample_needs = True
                                                                                  )
-                            # print()
-                            # mel spectrogram plot 
-                            # figs_eval += [fig]
-                            # wandb.log({ 'chart' : wandb.Image(fig) })
+                            # mel-spectrogram plot
                             accelerator.log({'Eval/Mel_SPectrogram' : wandb.Image(fig) })
 
                             ## wandb Add Audio 
@@ -371,45 +365,41 @@ def main(args, configs):
                             predict_audio = wandb.Audio(sample_audios_from_vals[1], sample_rate = 22050)
                             preview_table.add_data(step, 'EVAL', label_audio, predict_audio)
                             
-                            # sample_eval_audios += sample_audios_from_vals
-
-                            with open(os.path.join(val_log_path, "log.txt"), "a") as f:
-                                f.write(message + "\n")
+                            #################### Tensorboard Logging ######################
+                            # with open(os.path.join(val_log_path, "log.txt"), "a") as f:
+                            #     f.write(message + "\n")
+                            ################################################################
                 
                             model.train()
 
-                        if step % save_step == 0 or step % save_epoch_steps == 0:
-                        # if step % (100*3) == 0:
-                            accelerator.wait_for_everyone()
-                            model = accelerator.unwrap_model(model)
-                            # model
-                            # state_dict = model.module.state_dict() 
-                            state_dict = model.state_dict() 
-                            # optimizer
-                            unwrapped_optmizer = accelerator.unwrap_model(optimizer) 
 
+                        ############################
+                        # SAVE model and optimizer #
+                        ############################
+                        if (step >= args.save_start_step) and (step % save_step == 0 or step % save_epoch_steps == 0):
+
+                            accelerator.wait_for_everyone()
+                            
+                            # Unwrap: model
+                            unwrapped_model = accelerator.unwrap_model(model)
+                            # Unwrap: optimizer
+                            unwrapped_optmizer = accelerator.unwrap_model(optimizer) 
+                        
                             # Use accelerator.save()
                             # save_path = os.path.join(train_config["path"]["ckpt_path"], "{}.pth.tar".format(step),)
                             save_path = train_config["path"]["ckpt_path"]
-                            accelerator.save(state_dict, save_path + f"/model_{step}.pth")
+
+                            # state_dict; state_dict = model.module.state_dict() 
+                            unwrapped_model_state_dict = unwrapped_model.state_dict() 
+                            accelerator.save(unwrapped_model_state_dict, save_path + f"/model_{step}.pth")
                             accelerator.save(unwrapped_optmizer._optimizer.state_dict(), save_path + f"/optimizer_{step}.pth")
-                            # torch.save(
-                            #     {
-                            #         "model": model.module.state_dict(),
-                            #         "optimizer": optimizer._optimizer.state_dict(),
-                            #     },
-                            #     os.path.join(
-                            #         train_config["path"]["ckpt_path"],
-                            #         "{}.pth.tar".format(step),
-                            #     ),
-                            # )
-                        # print(f"{step} STEP is completed")
-                        # print()
+                            print(f"Model SAVED @ {step} of {epoch}")
+                            print()
+
                         step += 1
 
             print(f"{s_} {epoch} EPOCH is completed{sr_}")
-            # print()
-                        
+
 
         print(f"{b_}================================================== Training_EP:[{epoch}/{n_epochs}]_STEP:[{step}] ==================================================")
         # Printing the GPU memory usage details such as allocated memory, peak memory, and total memory usage
@@ -433,7 +423,30 @@ def main(args, configs):
         
         print(f"{b_}==================================================================================================================================={sr_}")
         print()
+    
+    #########################################
+    # In the End: SAVE model and optimizer #
+    #########################################
+    if args.save_at_last == "True":
 
+        accelerator.wait_for_everyone()
+        
+        # Unwrap: model
+        unwrapped_model = accelerator.unwrap_model(model)
+        # Unwrap: optimizer
+        unwrapped_optmizer = accelerator.unwrap_model(optimizer) 
+    
+        # Use accelerator.save()
+        # save_path = os.path.join(train_config["path"]["ckpt_path"], "{}.pth.tar".format(step),)
+        save_path = train_config["path"]["ckpt_path"]
+
+        # state_dict; state_dict = model.module.state_dict() 
+        unwrapped_model_state_dict = unwrapped_model.state_dict() 
+        accelerator.save(unwrapped_model_state_dict, save_path + f"/model_{step}.pth")
+        accelerator.save(unwrapped_optmizer._optimizer.state_dict(), save_path + f"/optimizer_{step}.pth")
+        
+        print(f"Model SAVED @ LAST")
+        print()
 
     ## Sample Audio Added
     # wandb.log({'Visualization': preview_table})
@@ -448,15 +461,19 @@ if __name__ == "__main__":
     parser.add_argument("--restore_step", type=int, default=0)
     parser.add_argument('--seed', type = int, default = 2023, help="Seed")
     parser.add_argument('--n_epochs', type = int, default = 840, help="Epochs")
+
     parser.add_argument('--save_epochs', type = int, default = 30, help="Model SAVE Epochs")
+    parser.add_argument('--save_start_step', type = int, default = 190000, help="Model SAVE function started when step reached this number")
+    parser.add_argument('--save_at_last', type = str, default = "True", help="Model SAVE After last step training.")
+
     parser.add_argument('--synthesis_logging_epochs', type = int, default = 100, help="Sample logging Epochs")
+    parser.add_argument('--denoising_strength', type = float, default = 0.005, help="HiFiGAN's Denoiser - denoising_strength")
+    # denoising_strength = 0.005
+
     # parser.add_argument('--batch_size', type = int, default = 16, help="Batch Size") ### This is defined in yaml, this doesn't work
     parser.add_argument('--group_size', type = int, default = 3, help="Group Size")
     parser.add_argument('--project_name', type = str, default = "FastSpeech2_german", help="PROJECT NAME IN WANDB")
     parser.add_argument('--try_name', type = str, default = "Train_t01", help="Naming tries of PROJECT IN WANDB")
-
-    ## configs ?
-    ## why? /home/heiscold/fs2/config/LibriTTS
 
     parser.add_argument(
         "-p",
@@ -497,12 +514,7 @@ if __name__ == "__main__":
     configs = (preprocess_config, model_config, train_config)
 
     main(args, configs)
-    # This is first
-    # wandb login --relogin '#################################'
+    # accelerate config
+    # CUDA_VISIBLE_DEVICES=1 accelerate launch train.py --n_epochs 990 --save_epochs 50 --synthesis_logging_epochs 30 --try_name T4_MoRrgetda
 
-    # And Then Train!
-    # CUDA_VISIBLE_DEVICES=0 python3 train.py -p ./config/LibriTTS/preprocess.yaml -m ./config/LibriTTS/model.yaml -t ./config/LibriTTS/train.yaml
-    # CUDA_VISIBLE_DEVICES=0 python3 train.py --restore_step 600000 --n_epochs 75 --save_epochs 20 --synthesis_logging_epochs 20 --try_name Train_t01_part2
-    # CUDA_VISIBLE_DEVICES=1 python3 train.py --n_epochs 900 --save_epochs 50 --synthesis_logging_epochs 30 --try_name T2
-
-    
+    ## wandb login --relogin '##### Token Key #######'
