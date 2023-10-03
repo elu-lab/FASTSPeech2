@@ -35,6 +35,10 @@ def pad(input_ele, mel_max_length=None):
     return out_padded
 
 ############################# @ transformer #################################
+
+#############################################################
+# get_mask_from_lenghts: modified (Error @ VarianceAdaptor) #
+#############################################################
 def get_mask_from_lengths(lengths, max_len=None):
 
     batch_size = lengths.shape[0]
@@ -50,6 +54,23 @@ def get_mask_from_lengths(lengths, max_len=None):
     mask = mask.to(lengths.device) ## To Same Device of lengths
 
     return mask
+
+
+###################################
+# get_mask_from_lenghts: Original #
+###################################
+
+# def get_mask_from_lengths(lengths, max_len=None):
+#     # print(lengths.shape, lengths.is_cuda)
+#     # print(lengths)
+#     batch_size = lengths.shape[0]
+#     if max_len is None:
+#         max_len = torch.max(lengths).item()
+
+#     ids = torch.arange(0, max_len).unsqueeze(0).expand(batch_size, -1).to(device)
+#     mask = ids >= lengths.unsqueeze(1).expand(-1, max_len)
+#     return mask
+
 
 
 #################### @ dataset.py - Dataset ################
