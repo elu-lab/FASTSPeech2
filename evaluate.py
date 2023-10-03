@@ -1,4 +1,5 @@
 ############## Github[evaluate.py]: https://github.com/ming024/FastSpeech2/blob/master/evaluate.py ####################
+
 import os
 import argparse
 import yaml
@@ -40,7 +41,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def evaluate_fn(model, 
                 step, 
                 configs, 
-                logger=None, 
+                logging=True, ## Modified 09.27 - Logger -> Logging: True
                 vocoder=None, 
                 vocoder_train_setup = None, 
                 denoiser = None, 
@@ -100,7 +101,7 @@ def evaluate_fn(model,
                         "Eval/Duration_loss": losses[5],
                         }, step = step)
         
-        if logger is not None:
+        if logging:
             fig, wav_reconstruction, wav_prediction, tag = synth_one_sample(
                 batch,
                 output,
@@ -113,22 +114,7 @@ def evaluate_fn(model,
             )
             
             sample_audios += [wav_reconstruction, wav_prediction]
-
-            log_fn( logger,
-                    fig=fig,
-                    tag="Validation/step_{}_{}".format(step, tag),)
-            
-            sampling_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
-
-            log_fn( logger,
-                    audio=wav_reconstruction,
-                    sampling_rate=sampling_rate,
-                    tag="Validation/step_{}_{}_reconstructed".format(step, tag), )
-            
-            log_fn( logger,
-                    audio=wav_prediction,
-                    sampling_rate=sampling_rate,
-                    tag="Validationg/step_{}_{}_synthesized".format(step, tag),)
+            ## Removed Tensorboard logging codes 
         
         print(f"{g_} Eval[{step}]: {message} {sr_}")
         print(f"Validation @ {step}: Firnished")
@@ -203,7 +189,7 @@ if __name__ == "__main__":
     message = evaluate_fn( model, 
                            args.restore_step, 
                            configs, 
-                           logger=None, 
+                           logging=True, 
                            vocoder=vocoder, 
                            vocoder_train_setup = vocoder_train_setup, 
                            denoiser = denoiser, 
