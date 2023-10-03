@@ -211,8 +211,10 @@ finals = [
     "vn5",
 ]
 
-### this is from ipa dataset
-## https://github.com/AdamSteffanick/ipa-data/blob/master/guid-o-matic/ipa-data/ipa-data.csv
+
+##########################################################################################################
+# IPA Dataset: https://github.com/AdamSteffanick/ipa-data/blob/master/guid-o-matic/ipa-data/ipa-data.csv #
+##########################################################################################################
 part_1 =  ['p', 'b', 't', 'd', 'ʈ', 'ɖ', 'c', 'ɟ', 'k', 'ɡ', 'q', 'ɢ', 'ʔ', 'm', 'ɱ']
 part_2 =  ['n', 'ɳ', 'ɲ', 'ŋ', 'ɴ', 'ʙ', 'r', 'ʀ', 'ɾ', 'ɽ', 'ɸ', 'β', 'f', 'v', 'θ']
 part_3 =  ['ð', 's', 'z', 'ʃ', 'ʒ', 'ʂ', 'ʐ', 'ç', 'ʝ', 'x', 'ɣ', 'χ', 'ʁ', 'ħ', 'ʕ']
@@ -244,8 +246,11 @@ ipa_total_symbols = ipa_total_symbols + list( set( part_11 + part_12 + part_13 +
 ipa_total_symbols = list(set(ipa_total_symbols ))
 ipa_totals = ["@" + s for s in ipa_total_symbols]
 
-### This is from spvocab.vocab (prof)
-### phones whose phsone[0] == "_" are too many (6584) -> Temporary exclueded
+
+
+############################################################################################################
+# From Professor: spvocab.vocab ; phones whose phsone[0] == "_" are too many (6584) -> Temporary exclueded #
+############################################################################################################
 part__1 =  ['ʊ', '̹', 'ú', '˨', 'ɟ', '̪', '̆', 'ă', 'F', '*', 'ɱ', '.', '%', 'ẽ', 'é']
 part__2 =  ['e', 's', '̞', 'C', '4', '͜', 'ː', 'ç', 'ʈ', 'f', 'ǐ', '͡', 'ĩ', 'ɑ', '"']
 part__3 =  ['ɹ', '̊', 'i', 'ð', 'っ', '3', 'ɦ', '˕', 'ʐ', '5', '̰', 'Õ', '̚', 'ɐ', 'd']
@@ -265,17 +270,21 @@ filters = ["@" + s for s in filtered_ones ]
 # print(len(filtered_ones))
 # filtered_ones[:10]
 
-## manually added
+
+##################################
+# From Professor; Manually Added #
+##################################
 part5 = [ '@l̥', '@œ̃', '@a̠', '@aɪ', '@it', '@eː', '@in', 'ˈu', '@ɤ̆', '@aŋ', '@t͡', '@ŋ͡', '@oː', '@˦˨', '@ˈi', '@əɫ', '@o̞', '@ˈo', '@ɐ̃', '@aː', '@n̪', '@ɛ̝', '@i̯' ]
 part6 = [ '@t̪', '@l̪', '@w̃', '@d̪', '@j̃', '@ˈe', '@ʃt', '@az', '@ɔs', '@ɔɫ', '@ɔɕ', '@ɾt', '@iˈ', '@kw', '@ɐm', '@ɪg', '@͡p']
 part7 = [ '@ẽː', '@ɛː', '@ɜː', '@ˈɛ', '@t̪', '@l̪', '@w̃', '@d̪', '@ap', '@jo', '@j̃', '@ˈs', '@k̚']
 part8 = [ '@t͡ʃ' ] ## added 9/13
 
-m_adds = list( set( part5 + part6 + part7 + part8) )
+m_adds = list( set( part5 + part6 + part7 + part8) ) ## 49
 
 
-## This is GERMAN
-## New: from TextGrids by MFA
+##################################
+# GREMAEN: from TextGrids by MFA #
+##################################
 part1 = ['@ɔ', '@tʰ', '@ɐ', '@t', '@iː', '@ə', '@ŋ', '@v', '@l̩', '@ç', '@x', '@ʊ', '@ɔʏ']
 part2 = ['@uː', '@aj', '@ʏ', '@ɟ', '@yː', '@pf', '@l', '@h', '@f', '@ʁ', '@k', '@ɛ', '@ɪ', '@ʃ']
 part3 = ['@aw', '@aː', '@œ', '@eː', '@ts', '@tʃ', '@oː', '@kʰ', '@z', '@j', '@s', '@pʰ', '@ɲ', '@cʰ']
@@ -288,7 +297,22 @@ ger_phones = {'<blk>': 0, 'a': 1, 'b': 2, 'd': 3, 'd͡ʒ': 4, 'e': 5, 'f': 6, 'h
 ger_phones_totals = ['@'+k for k, v in ger_phones.items() if v !=0 and v!=43]
 
 
-## This is English
+#######################
+# GREMAEN: Before - T1#
+#######################
+part1_b = ['@oː', '@yː', '@a', '@kʰ', '@l̩', '@ʊ', '@ts', '@ɛ', '@ɟ', '@pf', '@øː', '@ə', '@tʰ','@aː', '@ɪ', '@eː', '@cʰ', '@ɡ', '@n̩', '@ç', '@ʃ', '@ɔ', '@ʏ', '@ɐ', '@iː', '@ŋ', '@tʃ', '@œ', '@aw', '@ɔʏ', '@uː', '@ʁ', '@aj', '@v', '@m̩']
+part2_b = ['@cʰ', '@ɲ', '@tʃ', '@øː', '@ɔʏ', '@uː', '@pʰ', '@l̩', '@m̩']
+part3_b = ['@cʰ', '@ɲ', '@tʃ', '@œ', '@øː', '@ɔʏ', '@uː', '@pʰ', '@l̩', '@m̩']
+part4_b = ['@cʰ', '@ɲ', '@tʃ', '@œ', '@øː', '@ɔʏ', '@uː', '@pʰ', '@l̩', '@m̩']
+
+valid_symbols2_b = part1_b + part2_b + part3_b + part4_b
+ ## n_vocab: 424
+
+
+
+#####################
+# English: from MFA #
+#####################
 en_part_1 =  ['ɛ', 'aj', 'mʲ', 'n', 'ɜː', 'vʷ', 'tʲ', 'dʲ', 'ɾ̃', 'ɒː', 'fʲ', 'ɔj']
 en_part_2 =  ['cʷ', 'k', 'ɛː', 'ɟ', 'ow', 'h', 'ʎ', 'iː', 'ɔ', 'pʷ', 'ɐ', 'tʃ']
 en_part_3 =  ['ɝ', 'ɡʷ', 'ʃ', 'm', 'ʉː', 'ç', 'bʲ', 'vʲ', 't̪', 'm̩', 'ej'] # 'spn',
@@ -305,7 +329,10 @@ en_totals= ["@" + s for s in en_total_phones ]
 eng_phones = {'<blk>': 0, 'a': 1, 'b': 2, 'b̥': 3, 'd': 4, 'dʒ': 5, 'd̥': 6, 'e': 7, 'f': 8, 'g': 9, 'h': 10, 'i': 11, 'j': 12, 'k': 13, 'kʰ': 14, 'l': 15, 'm': 16, 'n': 17, 'o': 18, 'p': 19, 'pʰ': 20, 's': 21, 't': 22, 'tʃ': 23, 'tʰ': 24, 'u': 25, 'v': 26, 'w': 27, 'z': 28, 'æ': 29, 'ð': 30, 'ŋ': 31, 'ɑ': 32, 'ɔ': 33, 'ə': 34, 'ɛ': 35, 'ɡ̥': 36, 'ɪ': 37, 'ɹ': 38, 'ɹ̩': 39, 'ʃ': 40, 'ʊ': 41, 'ʌ': 42, 'ʒ': 43, 'θ': 44, '<eos>': 45}
 eng_phones_totals = ['@'+k for k, v in eng_phones.items() if v !=0 and v!=45] 
 
-## This is French
+
+####################
+# French: from MFA #
+####################
 fr_part_1 =  ['ø', 'œ', 'c', 'ɑ̃', 'mʲ', 'ʃ', 'b', 'ɲ', 'u', 'n']
 fr_part_2 =  ['l', 'tʃ', 's', 'a', 'ɛ', 'j', 'ʁ', 'o', 't', 'ɟ']
 fr_part_3 =  ['dʒ', 'ʒ', 'p', 'k', 'ʎ', 'ɛ̃', 'w', 'ɔ', 'z'] # 'spn']
@@ -316,7 +343,14 @@ fr_total_phones = list(set(fr_part_1 + fr_part_2 + fr_part_3 + fr_part_4 + fr_pa
 fr_totals = ["@" + s for s in fr_total_phones ]
 # len(fr_total_phones) ## 44
 
-## This is Polish
+fr_phones = {'<blk>': 0, 'a': 1, 'ɑ̃': 2, 'b': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'i': 8, 'j': 9, 'k': 10, 'l': 11, 'm': 12, 'n': 13, 'o': 14, 'p': 15, 's': 16, 't': 17, 'u': 18, 'v': 19, 'w': 20, 'y': 21, 'z': 22, 'ø': 23, 'ŋ': 24, 'œ': 25, 'œ̃': 26, 'ɑ': 27, 'ɔ': 28, 'ɔ̃': 29, 'ə': 30, 'ɛ': 31, 'ɛ̃': 32, 'ɥ': 33, 'ɲ': 34, 'ʁ': 35, 'ʁ̝': 36, 'ʃ': 37, 'ʒ': 38, 'χ': 39, '<eos>': 40}
+fr_phones_totals = ['@'+k for k, v in fr_phones.items() if v !=0 and v!=40]
+
+
+
+#####################
+# Polish: from MFA #
+#####################
 pol_part_1 =  ['k', 's̪', 'l', 't̪', 'tʂ', 'ʐ', 'p', 'u', 'ɟ', 'ɛ̃', 'd̪z̪']
 pol_part_2 =  ['tɕ', 'pʲ', 'ŋ', 'x', 'z̪', 'ʑ', 'tʲ', 'rʲ', 'i', 'w', 'mʲ']
 pol_part_3 =  ['ɔ̃', 'dʐ', 'ʂ', 'm', 'v', 'ɨ', 'ɲ', 'ʎ', 'bʲ', 'dʑ', 'a']
@@ -327,7 +361,10 @@ pol_total_phones = list(set(pol_part_1 + pol_part_2 + pol_part_3 + pol_part_4 + 
 pol_totals = ["@" + s for s in pol_total_phones ]
 # len(pol_total_phones) ## 51
 
-## This is Portuguese
+
+########################
+# Portuguese: from MFA #
+########################
 port_part_1 =  ['ɐ̃', 'z', 'x', 'a', 'ɟ', 'ʁ', 'ɡ', 't', 'ʎ', 's', 'ʃ'] # 'spn',
 port_part_2 =  ['β', 'u', 'tʃ', 'p', 'i', 'w', 'j', 'ɣ', 'õ', 'j̃', 'v', 'w̃']
 port_part_3 =  ['ɛ', 'n', 'd', 'k', 'l', 'b', 'ĩ', 'dʒ', 'm', 'ɔ', 'ɨ', 'e']
@@ -337,7 +374,10 @@ port_total_phones = list(set(port_part_1 + port_part_2 + port_part_3 + port_part
 port_totals = ["@" + s for s in port_total_phones ]
 # len(port_total_phones) ## 46
 
-## This is Spanish
+
+#####################
+# Spanish: from MFA #
+#####################
 spa_part_1 =  ['ŋ', 'j', 'a', 'p', 'e', 'b', 'w', 'β', 'ɟ', 'ɟʝ', 'ɾ', 'l']
 spa_part_2 =  ['m', 'f', 'r', 'd̪', 'k', 's', 'x', 'ɡ', 'o', 'ð', 'ʝ', 'i']
 spa_part_3 =  ['θ', 'ɲ', 'u', 'tʃ', 'ɣ', 'ʎ', 'ç', 'n', 'ʃ', 't̪', 'c'] # 'spn', 
@@ -346,30 +386,70 @@ spa_total_phones = list(set(spa_part_1 + spa_part_2 + spa_part_3 ) )
 spa_totals = ["@" + s for s in spa_total_phones ]
 # len(spa_total_phones) ## 36
 
-### Before: T1 [GERMAN]
-part1_b = ['@oː', '@yː', '@a', '@kʰ', '@l̩', '@ʊ', '@ts', '@ɛ', '@ɟ', '@pf', '@øː', '@ə', '@tʰ','@aː', '@ɪ', '@eː', '@cʰ', '@ɡ', '@n̩', '@ç', '@ʃ', '@ɔ', '@ʏ', '@ɐ', '@iː', '@ŋ', '@tʃ', '@œ', '@aw', '@ɔʏ', '@uː', '@ʁ', '@aj', '@v', '@m̩']
-part2_b = ['@cʰ', '@ɲ', '@tʃ', '@øː', '@ɔʏ', '@uː', '@pʰ', '@l̩', '@m̩']
-part3_b = ['@cʰ', '@ɲ', '@tʃ', '@œ', '@øː', '@ɔʏ', '@uː', '@pʰ', '@l̩', '@m̩']
-part4_b = ['@cʰ', '@ɲ', '@tʃ', '@œ', '@øː', '@ɔʏ', '@uː', '@pʰ', '@l̩', '@m̩']
 
-valid_symbols2_b = part1_b + part2_b + part3_b + part4_b
- ## n_vocab: 424
 
-##  T2 [GERMAN]
-# valid_symbols = initials + finals + ["rr"]
-valid_symbols2 = list( set(ipa_totals + m_adds + filters + ger_totals ) )  
+#################
+#  T2 [GERMAN]  #
+#################
+valid_symbols = initials + finals #+ ["rr"]
+valid_symbols2 = list( set(ipa_totals + m_adds + filters + ger_totals ) )  ## 424
 ## n_vocab: 783
 
-##  T3 [GERMAN]
-# valid_symbols = initials + finals + ["rr"]
-# valid_symbols3 = list( set(filters + m_adds + ger_totals + ger_phones_totals + list(set(valid_symbols2_b))) ) ## n_vocab: 329
-# valid_symbols3 = list( set(m_adds + ger_totals + ger_phones_totals + list(set(valid_symbols2_b))) ) ## n_vocab: 180
-valid_symbols3 = list( set(ger_totals + ger_phones_totals + list(set(valid_symbols2_b))) ) ## n_vocab: 135
 
-##  T4 [ENGLISH]
-valid_symbols = initials + finals + ["rr"]
-# valid_symbols4 = list( set(m_adds + en_totals + eng_phones_totals ) ) ## n_vocab: 206
-valid_symbols4 = list( set( en_totals + eng_phones_totals ) ) ## n_vocab: 162
+
+#########################################################
+#  T3 [GERMAN]: cmudict, pinyin.valid_symbols excluded  #
+#########################################################
+# valid_symbols = initials + finals + ["rr"]
+# valid_symbols3 = list( set(filters + m_adds + ger_totals + ger_phones_totals + list(set(valid_symbols2_b))) ) ## 262 ## n_vocab: 329
+# valid_symbols3 = list( set(m_adds + ger_totals + ger_phones_totals + list(set(valid_symbols2_b))) ) ## 113 ## n_vocab: 180
+
+
+####################################################################
+#  T3_HJ [GERMAN]: cmudict, pinyin.valid_symbols, m_adds excluded  #
+####################################################################
+# valid_symbols3 = list( set(ger_totals + ger_phones_totals + list(set(valid_symbols2_b))) ) ## 68 ## n_vocab: 135
+valid_symbols3 = list( set(ger_totals + list(set(valid_symbols2_b))) ) ## 52 ## n_vocab: 119 
+
+
+############################################################################################################
+#  T4_MR [GERMAN]: cmudict, pinyin.valid_symbols, m_adds, ... (except ger_totals) all phones are excluded  #
+############################################################################################################
+## https://mfa-models.readthedocs.io/en/latest/dictionary/German/German%20MFA%20dictionary%20v2_0_0a.html
+mfa_official_ger = "a aj aw aː b c cʰ d eː f h iː j k kʰ l l̩ m m̩ n n̩ oː p pf pʰ s t ts tʃ tʰ uː v x yː z ç øː ŋ œ ɐ ɔ ɔʏ ə ɛ ɟ ɡ ɪ ɲ ʁ ʃ ʊ ʏ"
+mfa_ger = mfa_official_ger.split(" ")
+mfa_ger = sorted(['@'+s for s in mfa_ger if s != ' '])
+valid_symbols4 = mfa_ger 
+## 52 
+## n_vocab: 67
+
+
+#################
+#  T5 [FRENCH] #
+#################
+valid_symbols5 = list( set( fr_totals + fr_phones_totals ) ) ## 114
+
+
+#################
+#  T6 [ENGLISH] #
+#################
+### US: https://mfa-models.readthedocs.io/en/latest/dictionary/English/English%20%28US%29%20MFA%20dictionary%20v2_0_0.html
+### UK: https://mfa-models.readthedocs.io/en/latest/dictionary/English/English%20%28UK%29%20MFA%20dictionary%20v2_0_0a.html
+mfa_official_us_en = "aj aw b bʲ c cʰ d dʒ dʲ ej f fʲ h i iː j k kʰ l m mʲ m̩ n n̩ ow p pʰ pʲ s t tʃ tʰ tʲ v vʲ w z æ ç ð ŋ ɐ ɑ ɑː ɒ ɒː ɔj ə ɚ ɛ ɝ ɟ ɡ ɪ ɫ ɫ̩ ɱ ɲ ɹ ɾ ʃ ʉ ʉː ʊ ʎ ʒ ʔ θ"
+mfa_official_british_en= "aj aw b bʲ c cʰ d dʒ dʲ d̪ ej f fʲ h i iː j k kʰ l m mʲ m̩ n n̩ p pʰ pʲ s t tʃ tʰ tʲ t̪ v vʲ w z æ ç ð ŋ ɐ ɑ ɑː ɒ ɒː ɔj ə əw ɛ ɛː ɜ ɜː ɟ ɡ ɪ ɫ ɫ̩ ɱ ɲ ɹ ʃ ʉ ʉː ʊ ʎ ʒ ʔ θ"
+mfa_en = mfa_official_british_en.split(" ")
+mfa_en = sorted(['@'+s for s in mfa_en if s != ' ']) ## DOSEN'T WORKED ERROR!! 
+# valid_symbols6 = mfa_en ## n_vocab: 83 (US) // 85 (British)
+## T6_JeBAl
+# valid_symbols6 = sorted(en_totals) # n_vocab: 104
+
+## T6_1_Yee-Rul-Jul-Al-at-uh
+## T6_2_Ah_Nwah
+## T6_2_Ah_Nwah_Jin_ZZA
+# https://mfa-models.readthedocs.io/en/latest/dictionary/English/English%20MFA%20dictionary%20v2_2_1.html
+mfa_official_ens_221 = "a aj aw aː b bʲ c cʰ cʷ d dʒ dʲ d̪ e ej f fʲ fʷ h i iː j k kp kʰ kʷ l m mʲ m̩ n n̩ o ow p pʰ pʲ pʷ s t tʃ tʰ tʲ tʷ t̪ u uː v vʲ vʷ w z æ ç ð ŋ ɐ ɑ ɑː ɒ ɒː ɔ ɔj ə əw ɚ ɛ ɛː ɜ ɜː ɝ ɟ ɟʷ ɡ ɡb ɡʷ ɪ ɫ ɫ̩ ɲ ɹ ɾ ɾʲ ɾ̃ ʃ ʉ ʉː ʊ ʎ ʒ ʔ θ"
+mfa_ens221 = sorted(['@'+s for s in mfa_official_ens_221.split(" ") if s != ' '])
+valid_symbols6 = mfa_ens221 ## n_vocab: 83
 
 
 # ## New: from TextGrids by MFA
