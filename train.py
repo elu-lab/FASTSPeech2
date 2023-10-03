@@ -1,3 +1,4 @@
+############## Github[train.py]: https://github.com/ming024/FastSpeech2/blob/master/train.py ####################
 
 import os
 import yaml
