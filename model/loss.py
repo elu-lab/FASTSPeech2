@@ -50,6 +50,7 @@ class FastSpeech2Loss(nn.Module):
             ## pitch_predictions: [16, 194] -> [2699]
             ## pitch_targets: [16, 194] -> [2699]
         elif self.pitch_feature_level == "frame_level":
+            pitch_predictions = pitch_predictions[:, :mel_masks.shape[1]] ## Added for matching the shape
             pitch_predictions = pitch_predictions.masked_select(mel_masks)
             pitch_targets = pitch_targets.masked_select(mel_masks)
 
@@ -59,6 +60,7 @@ class FastSpeech2Loss(nn.Module):
             ## energy_predictions: [16, 194] -> [2699]
             ## energy_targets: [16, 194] -> [2699]
         if self.energy_feature_level == "frame_level":
+            energy_predictions = energy_predictions[:, :mel_masks.shape[1]] ## Added for matching the shape
             energy_predictions = energy_predictions.masked_select(mel_masks)
             energy_targets = energy_targets.masked_select(mel_masks)
 
