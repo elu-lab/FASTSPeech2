@@ -22,68 +22,26 @@ _silences = ["@sp", "@spn", "@sil"]
 _pinyin = ["@" + s for s in pinyin.valid_symbols] ## 209
 
 _pinyin6 = [s for s in pinyin.valid_symbols6] #  [ENGLISH]
-_pinyin5 = [s for s in pinyin.valid_symbols5] #  [FRENCH]
-_pinyin4 = [s for s in pinyin.valid_symbols4] #  [ENGLISH]
-_pinyin3 = [s for s in pinyin.valid_symbols3] #  [GERMAN]
-_pinyin2 = [s for s in pinyin.valid_symbols2] #  [GERMAN]
+# _pinyin5 = [s for s in pinyin.valid_symbols5] #  [FRENCH]
+_pinyin4 = [s for s in pinyin.valid_symbols4] #  [GERMAN]
+# _pinyin3 = [s for s in pinyin.valid_symbols3] #  [GERMAN]
+# _pinyin2 = [s for s in pinyin.valid_symbols2] #  [GERMAN]
 
 _pinyin2_b = [s for s in pinyin.valid_symbols2_b]
 
-### T1
-# Export all symbols:
-# symbols = (
-#     [_pad]
-#     + list(_special)
-#     + list(_punctuation)
-#     + list(_letters)
-#     + _arpabet
-#     + _pinyin
-#     + _pinyin2_b
-#     # + list(_letters_ipa) ## added @ pinyin.py or not
-#     + _silences
-# )
-
-### T2
-# Export all symbols:
-# symbols = (
-#     [_pad]
-#     + list(_special)
-#     + list(_punctuation)
-#     + list(_letters)
-#     + _arpabet
-#     + _pinyin
-#     + _pinyin2
-#     # + list(_letters_ipa) ## added @ pinyin.py or not
-#     + _silences
-# )
-
-### T3
-# Export all symbols:
-# symbols = (
-#     [_pad]
-#     + list(_special)
-#     + list(_punctuation)
-#     + list(_letters)
-#     # + _arpabet
-#     # + _pinyin
-#     + _pinyin3
-#     # + list(_letters_ipa) ## added @ pinyin.py or not
-#     + _silences
-# )
-
 ### T4_MR
 # Export all symbols:
-# symbols = (
-#     [_pad]
-#     + list(_special)
-#     + list(_punctuation)
-#     # + list(_letters)
-#     # + _arpabet
-#     # + _pinyin
-#     + _pinyin4
-#     # + list(_letters_ipa) ## added @ pinyin.py or not
-#     + _silences
-# )
+symbols = (
+    [_pad]
+    + list(_special)
+    + list(_punctuation)
+    # + list(_letters)
+    # + _arpabet
+    # + _pinyin
+    + _pinyin4
+    # + list(_letters_ipa) ## added @ pinyin.py or not
+    + _silences
+)
 
 
 ### T5 [FRENCH]
@@ -103,14 +61,14 @@ _pinyin2_b = [s for s in pinyin.valid_symbols2_b]
 
 ### T6 [ENGLISH]
 # Export all symbols:
-symbols = (
-    [_pad]
-    + list(_special)
-    + list(_punctuation)
-    # + list(_letters)
-    # + _arpabet
-    # + _pinyin
-    + _pinyin6
-    # + list(_letters_ipa) ## added @ pinyin.py or not
-    + _silences
-)
+# symbols = (
+#     [_pad]
+#     + list(_special)
+#     + list(_punctuation)
+#     # + list(_letters)
+#     # + _arpabet
+#     # + _pinyin
+#     + _pinyin6
+#     # + list(_letters_ipa) ## added @ pinyin.py or not
+#     + _silences
+# )
