@@ -91,7 +91,6 @@ class VarianceAdaptor(nn.Module):
             ## Professor Added This Code
             # prediction = torch.full_like(prediction, fill_value=prediction.mean())  #TODO remove
             prediction = prediction * control
-            prediction = prediction * control
             embedding = self.energy_embedding_layer(torch.bucketize(prediction, self.energy_bins))
         return prediction, embedding
 
