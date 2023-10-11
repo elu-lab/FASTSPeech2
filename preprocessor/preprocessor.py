@@ -68,6 +68,14 @@ class Preprocessor:
         ## lang
         self.lang = config["preprocessing"]["text"]["language"] ## 'gernman' @ sample-test
 
+        ## for PRINT
+        self.pitch_feature = config["preprocessing"]["pitch"]["feature"]
+        self.energy_feature = config["preprocessing"]["energy"]["feature"]
+
+        self.pitch_normal = config["preprocessing"]["pitch"]["normalization"]
+        self.energy_normal = config["preprocessing"]["energy"]["normalization"]
+
+        
         assert config["preprocessing"]["pitch"]["feature"] in [
             "phoneme_level",
             "frame_level",
@@ -297,6 +305,24 @@ class Preprocessor:
         os.makedirs((os.path.join(self.out_dir, "duration")), exist_ok=True)
 
         print("Processing Data ...")
+        print(f"Lang: {self.lang}")
+        print()
+        print(f"PITCH AVERAGING: {self.pitch_feature}")
+        print(f"ENERGY AVERAGING: {self.energy_feature}")
+        print()
+        print(f"PITCH Normalization: {self.pitch_normal}")
+        print(f"ENERGY Normalization: {self.energy_normal}")
+        print()
+        print(f"INPUT DIR: {self.in_dir}")
+        print(f"OUTPUT DIR: {self.out_dir}")
+        ## for PRINT
+        # self.pitch_feature = config["preprocessing"]["pitch"]["feature"]
+        # self.energy_feature = config["preprocessing"]["energy"]["feature"]
+
+        # self.pitch_normal = config["preprocessing"]["pitch"]["normalization"]
+        # self.energy_normal = config["preprocessing"]["energy"]["normalization"]
+
+        
         out = list()
         n_frames = 0
         pitch_scaler = StandardScaler()
