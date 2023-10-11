@@ -46,6 +46,10 @@ def window_sumsquare(
             dtype=np.float32,
             norm=None,
             ):
+
+    if win_length is None:
+        win_length = n_fft
+                                                
     n = n_fft + hop_length * (n_frames - 1) ## n : audio length? aprrocimate? # 326400 
     x = np.zeros(n, dtype=dtype)            ## np.zeros (Length of n)         # 326400 
 
