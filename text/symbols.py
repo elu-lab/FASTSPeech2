@@ -21,6 +21,7 @@ _silences = ["@sp", "@spn", "@sil"]
 # _arpabet = ["@" + s for s in cmudict.valid_symbols] ## 84
 _pinyin = ["@" + s for s in pinyin.valid_symbols] ## 209
 
+_pinyin7 = [s for s in pinyin.valid_symbols7] #  [KOREAN]
 _pinyin6 = [s for s in pinyin.valid_symbols6] #  [ENGLISH]
 # _pinyin5 = [s for s in pinyin.valid_symbols5] #  [FRENCH]
 _pinyin4 = [s for s in pinyin.valid_symbols4] #  [GERMAN]
@@ -69,6 +70,21 @@ symbols = (
 #     # + _arpabet
 #     # + _pinyin
 #     + _pinyin6
+#     # + list(_letters_ipa) ## added @ pinyin.py or not
+#     + _silences
+# )
+
+
+### T7 [KOREAN]
+# Export all symbols:
+# symbols = (
+#     [_pad]
+#     + list(_special)
+#     + list(_punctuation)
+#     # + list(_letters)
+#     # + _arpabet
+#     # + _pinyin
+#     + _pinyin7
 #     # + list(_letters_ipa) ## added @ pinyin.py or not
 #     + _silences
 # )
