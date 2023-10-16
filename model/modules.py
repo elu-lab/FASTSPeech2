@@ -118,15 +118,20 @@ class VarianceAdaptor(nn.Module):
             pitch_prediction, pitch_embedding = self.get_pitch_embedding(x, pitch_target, src_mask, p_control)
             ## pitch_prediction: [16, 214]
             ## pitch_embedding: [16, 214, 256]
-            x = x + pitch_embedding
+            # x = x + pitch_embedding
+            # x: [16, 214, 256]
+        
         if self.energy_feature_level == "phoneme_level":
             ## e_targets: [16, 214]
             energy_prediction, energy_embedding = self.get_energy_embedding(x, energy_target, src_mask, p_control)
             ## energy_prediction: [16, 214]
             ## energy_embedding: [16, 214, 256]
-            x = x + energy_embedding
+            # x = x + energy_embedding
             # x: [16, 214, 256]
 
+        ## HGU-DLLAB methods
+        x = x +  pitch_embedding + energy_embedding
+        
         if duration_target is not None:
             # duration_target: [16, 214]
             x, mel_len = self.length_regulator(x, duration_target, max_len)
