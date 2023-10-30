@@ -33,6 +33,7 @@
 #     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
 #     normalization: True
 
+
 import os
 import random
 import json
@@ -47,10 +48,9 @@ from scipy.interpolate import interp1d
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
-# import audio as Audio ## Doesn't work
+# import audio as Audio
 from audio.stft import *
 from audio.tools import *
-
 
 ############################# Preprocessor Class ################################ 
 class Preprocessor:
@@ -75,7 +75,7 @@ class Preprocessor:
         self.pitch_normal = config["preprocessing"]["pitch"]["normalization"]
         self.energy_normal = config["preprocessing"]["energy"]["normalization"]
 
-        
+
         assert config["preprocessing"]["pitch"]["feature"] in [
             "phoneme_level",
             "frame_level",
@@ -204,7 +204,9 @@ class Preprocessor:
             return None
 
         # Read and trim wav files
-        wav, _ = librosa.load(wav_path) ## numpy # (184800,)
+        wav, org_sr = librosa.load(wav_path, sr =None) ## numpy # (184800,)
+        # Resample librosa
+        wav = librosa.resample(wav, orig_sr = org_sr, target_sr = self.sampling_rate )
         wav = wav[ ## sampling_rate = 22050
             int(self.sampling_rate * start) : int(self.sampling_rate * end)
         ].astype(np.float32) # (173996,)
@@ -217,10 +219,10 @@ class Preprocessor:
         # Compute fundamental frequency
         # pw: https://github.com/JeremyCCHsu/Python-Wrapper-for-World-Vocoder
         pitch, t = pw.dio( ## raw pitch extractor
-        wav.astype(np.float64),
-        self.sampling_rate, ## 22050
-            frame_period=self.hop_length / self.sampling_rate * 1000, ## frame_perid = 1024/ 22050 * 1000 # ms
-        ) 
+            wav.astype(np.float64),
+            self.sampling_rate, ## 22050
+            frame_period=self.hop_length / self.sampling_rate * 1000, ## frame_period = 1024/ 22050 * 1000 # ms
+            ) 
         ## pitch, t Shape = # 170, (170,)
         ## sum(duration) = 188
         ## pitch refinement
@@ -305,7 +307,10 @@ class Preprocessor:
         os.makedirs((os.path.join(self.out_dir, "duration")), exist_ok=True)
 
         print("Processing Data ...")
+        print()
         print(f"Lang: {self.lang}")
+        print()
+        print(f"Sampling Rate: -[Resampled]-> {self.sampling_rate}")
         print()
         print(f"PITCH AVERAGING: {self.pitch_feature}")
         print(f"ENERGY AVERAGING: {self.energy_feature}")
@@ -322,7 +327,7 @@ class Preprocessor:
         # self.pitch_normal = config["preprocessing"]["pitch"]["normalization"]
         # self.energy_normal = config["preprocessing"]["energy"]["normalization"]
 
-        
+
         out = list()
         n_frames = 0
         pitch_scaler = StandardScaler()
@@ -330,7 +335,7 @@ class Preprocessor:
 
         # Compute pitch, energy, duration, and mel-spectrogram
         speakers = {}
-    
+ 
         # lang = 'german'
         # tg_base_path = f"/data/speech-data/mls-align/mls_{lang}_opus/train/"
       
