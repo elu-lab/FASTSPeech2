@@ -41,34 +41,6 @@ def get_model(args, configs, device, train=False):
     return model
 
 
-################################# Original #####################################
-# def get_model(args, configs, device, train=False):
-#     (preprocess_config, model_config, train_config) = configs
-
-#     model = FastSpeech2(preprocess_config, model_config).to(device)
-#     if args.restore_step:
-#         ckpt_path = os.path.join(
-#             train_config["path"]["ckpt_path"],
-#             "{}.pth.tar".format(args.restore_step),
-#         )
-#         ckpt = torch.load(ckpt_path)
-#         model.load_state_dict(ckpt["model"])
-
-#     if train:
-#         scheduled_optim = ScheduledOptim(
-#             model, train_config, model_config, args.restore_step
-#         )
-#         if args.restore_step:
-#             scheduled_optim.load_state_dict(ckpt["optimizer"])
-#         model.train()
-#         return model, scheduled_optim
-
-#     model.eval()
-#     model.requires_grad_ = False
-#     return model
-
-
-
 ################################# @ train.py #####################################
 def get_param_num(model):
     num_param = sum(param.numel() for param in model.parameters())
@@ -81,67 +53,30 @@ def get_vocoder(config, device):
     speaker = config["vocoder"]["speaker"]
 
     if name == "MelGAN":
-        if speaker == "LJSpeech":
-            vocoder = torch.hub.load("descriptinc/melgan-neurips", "load_melgan", "linda_johnson" )
-        elif speaker == "universal":
-            vocoder = torch.hub.load( "descriptinc/melgan-neurips", "load_melgan", "multi_speaker" ) ## Doesn't work
-            ### mel() takes 0 positional arguments but 5 were given
-        vocoder.mel2wav.eval()
-        vocoder.mel2wav.to(device)
-        return vocoder
-    elif name == "HiFi-GAN":
-        # with open("hifigan/config.json", "r") as f:
-        #     config = json.load(f)
-        # config = hifigan.AttrDict(config)
-        # vocoder = hifigan.Generator(config)
-        # if speaker == "LJSpeech":
-        #     ckpt = torch.load("hifigan/generator_LJSpeech.pth.tar")
-        # elif speaker == "universal":
-        #     ckpt = torch.load("hifigan/generator_universal.pth.tar")
-        # vocoder.load_state_dict(ckpt["generator"])
-
-        # hifigan, vocoder_train_setup, denoiser = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_hifigan') ## Worked
-        vocoder, vocoder_train_setup, denoiser = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_hifigan') ## Worked
-        
+        vocoder = torch.hub.load('seungwonpark/melgan', 'melgan')
+        print(f"DownLoaded | seunwgwon Park's HiFi-GAN from torch hub | SR: 22050")
         vocoder.eval()
-        # vocoder.remove_weight_norm()
+        vocoder.to(device)
+        
+        return vocoder
+        
+    elif name == "HiFi-GAN":
+        vocoder, vocoder_train_setup, denoiser = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_hifigan') ## Worked
+        print(f"DownLoaded | NVIDIA's HiFi-GAN from torch hub | SR: 22050")
+        vocoder.eval()
         vocoder.to(device)
 
         return vocoder, vocoder_train_setup, denoiser 
-
-
-###################### Original ##################################
-# def get_vocoder(config, device):
-#     name = config["vocoder"]["model"]
-#     speaker = config["vocoder"]["speaker"]
-
-#     if name == "MelGAN":
-#         if speaker == "LJSpeech":
-#             vocoder = torch.hub.load(
-#                 "descriptinc/melgan-neurips", "load_melgan", "linda_johnson"
-#             )
-#         elif speaker == "universal":
-#             vocoder = torch.hub.load(
-#                 "descriptinc/melgan-neurips", "load_melgan", "multi_speaker"
-#             )
-#         vocoder.mel2wav.eval()
-#         vocoder.mel2wav.to(device)
-#     elif name == "HiFi-GAN":
-#         with open("hifigan/config.json", "r") as f:
-#             config = json.load(f)
-#         config = hifigan.AttrDict(config)
-#         vocoder = hifigan.Generator(config)
-#         if speaker == "LJSpeech":
-#             ckpt = torch.load("hifigan/generator_LJSpeech.pth.tar")
-#         elif speaker == "universal":
-#             ckpt = torch.load("hifigan/generator_universal.pth.tar")
-#         vocoder.load_state_dict(ckpt["generator"])
-#         vocoder.eval()
-#         vocoder.remove_weight_norm()
-#         vocoder.to(device)
-
-#     return vocoder
-
+    
+    elif name == "HiFi-GAN-16k":
+        from speechbrain.pretrained import HIFIGAN
+        vocoder = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="tmpdir")
+        print(f"DownLoaded | SpeechBrain's HiFi-GAN from speechbrain | SR: 16000")
+        vocoder.eval()
+        # vocoder.to(device) ## may not work
+        
+        return vocoder
+        
 
 ################################# @ train.py - HiFiGAN #####################################
 def vocoder_infer(mels, model_config, preprocess_config, 
@@ -153,21 +88,20 @@ def vocoder_infer(mels, model_config, preprocess_config,
     with torch.no_grad():
     
         if name == "MelGAN":
-            wavs = vocoder.inverse(mels / np.log(10))
+            wavs = vocoder.inference(mels)
+            # wavs = vocoder.inverse(mels / np.log(10))
 
         elif name == "HiFi-GAN":
-            ##### HifiGAN Vocoder  Colab
-            # mel, mel_lens, *_ = fastpitch(batch['text'].to(device), **gen_kw)
-            # audios = hifigan(mel).float()
-            # audios = denoiser(audios.squeeze(1), denoising_strength)
-            # audios = audios.squeeze(1) * vocoder_train_setup['max_wav_value']
-
-            ### Original
-            # wavs = vocoder(mels).squeeze(1)
             wavs = vocoder(mels).float()
             wavs = denoiser(wavs.squeeze(1), denoising_strength)
-            wavs = wavs.squeeze(1) # * vocoder_train_setup['max_wav_value']
+            wavs = wavs.squeeze(1) 
 
+        elif name == "HiFi-GAN-16k":
+            # Running Vocoder (spectrogram-to-waveform)
+            wavs = vocoder.decode_batch(mels)
+            # wavs.shape = [1, 1, 99840] -(sequeeze())-> [1, 99840]
+            wavs = wavs.squeeze(1).squeeze(1)
+           
 
     wavs = (
         wavs.cpu().numpy()
