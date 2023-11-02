@@ -57,8 +57,12 @@ def get_vocoder(config, device):
         print(f"DownLoaded | seunwgwon Park's HiFi-GAN from torch hub | SR: 22050")
         vocoder.eval()
         vocoder.to(device)
+
+        ## These below are not necessary; just try to avoid to modify codes of other parts :)
+        denoiser = nn.Linear(2, 1)
+        vocoder_train_setup = {"Nothing": 0.001} 
         
-        return vocoder
+        return vocoder, vocoder_train_setup, denoiser 
         
     elif name == "HiFi-GAN":
         vocoder, vocoder_train_setup, denoiser = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_hifigan') ## Worked
@@ -74,8 +78,11 @@ def get_vocoder(config, device):
         print(f"DownLoaded | SpeechBrain's HiFi-GAN from speechbrain | SR: 16000")
         vocoder.eval()
         # vocoder.to(device) ## may not work
-        
-        return vocoder
+
+        ## These below are not necessary; just try to avoid to modify codes of other parts :)
+        denoiser = nn.Linear(2, 1)
+        vocoder_train_setup = {"Nothing": 0.001} 
+        return vocoder, vocoder_train_setup, denoiser 
         
 
 ################################# @ train.py - HiFiGAN #####################################
