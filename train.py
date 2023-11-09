@@ -178,18 +178,17 @@ def main(args, configs):
 
     sampling_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
     sample_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
-    print(f"sampling_rate(=sample_rate): {sampling_rate}")
-    print()
-
+    print(f"sampling_rate(=sample_rate): {sampling_rate}", end ="\n" )
+    
     ###########################################################################################
     # Accelerator : https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation #
     ###########################################################################################
 
+    ##### This is for find unused parameters for avoiding errors
     # from accelerate.utils import DistributedDataParallelKwargs
     kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
     # accelerator = Accelerator(kwargs_handlers=[kwargs])
-    ## https://huggingface.co/docs/accelerate/package_reference/kwargs
-    
+
     accelerator = Accelerator(gradient_accumulation_steps = grad_acc_step, log_with="wandb", kwargs_handlers=[kwargs])
 
     ### Model
