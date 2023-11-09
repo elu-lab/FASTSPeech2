@@ -1,39 +1,5 @@
 ## Github[preprocessor.py]: https://github.com/ming024/FastSpeech2/blob/master/preprocessor/preprocessor.py
 ## Github[config][preprocess]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
-
-
-################## preprocess.yaml inforamtion #######################
-# dataset: "LibriTTS"
-# path:
-#   df_path: "/home/heiscold/prac/train_part_13k_german.csv"
-#   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
-#   lexicon_path: "lexicon/librispeech-lexicon.txt"
-#   raw_path: "./raw_data/LibriTTS" # in_dir
-#   preprocessed_path: "/home/heiscold/prac/" # "./preprocessed_data/LibriTTS" # out_dir
-# preprocessing:
-#   val_size: 512
-#   text:
-#     text_cleaners: ["english_cleaners"]
-#     language: "german"
-#   audio:
-#     sampling_rate: 22050
-#     max_wav_value: 32768.0
-#   stft:
-#     filter_length: 1024
-#     hop_length: 256
-#     win_length: 1024
-#   mel:
-#     n_mel_channels: 80
-#     mel_fmin: 0
-#     mel_fmax: 8000 # please set to 8000 for HiFi-GAN vocoder, set to null for MelGAN vocoder
-#   pitch:
-#     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
-#     normalization: True
-#   energy:
-#     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
-#     normalization: True
-
-
 import os
 import random
 import json
@@ -47,6 +13,12 @@ import pyworld as pw
 from scipy.interpolate import interp1d
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
+
+import torch
+import torchaudio
+
+from denoiser import pretrained
+from denoiser.dsp import convert_audio
 
 # import audio as Audio
 from audio.stft import *
@@ -103,6 +75,17 @@ class Preprocessor:
                 config["preprocessing"]["mel"]["mel_fmin"], # 0
                 config["preprocessing"]["mel"]["mel_fmax"], # 8000
             )
+        
+
+        self.load_audio_library = config["preprocessing"]["audio"]['load_audio_library']
+        print(f"Audio Library: {self.load_audio_library }")
+        
+        self.denoiser = config["preprocessing"]["audio"]["denoiser"]
+        if self.denoiser:
+            print("Denoising & Resample PreProcessing")
+            self.denoiser_model = pretrained.dns64().cuda()
+        else:
+            print("Only Resample")
 
     def normalize(self, in_dir, mean, std):
         max_value = np.finfo(np.float64).min
@@ -203,10 +186,35 @@ class Preprocessor:
         if start >= end:
             return None
 
-        # Read and trim wav files
-        wav, org_sr = librosa.load(wav_path, sr =None) ## numpy # (184800,)
-        # Resample librosa
-        wav = librosa.resample(wav, orig_sr = org_sr, target_sr = self.sampling_rate )
+        ## Read and trim wav files
+    
+        ## librosa.load
+        if self.load_audio_library == 'librosa':
+           wav, org_sr = librosa.load(wav_path, sr =None) ## numpy # (184800,)
+           ## Resample
+           wav = librosa.resample(wav, orig_sr = org_sr, target_sr = self.sampling_rate )
+        
+        ## torchaudio.load
+        if self.load_audio_library == 'torchaudio':
+            wav, org_sr = torchaudio.load(wav_path) ## numpy # (184800,)
+            ## Resample
+            wav = torchaudio.functional.resample(wav, orig_freq = org_sr, new_freq = self.sampling_rate )
+            wav = wav.reshape(-1).numpy()
+
+        
+        if self.denoiser:
+            ## Denoise --> Resample
+            # self.denoiser_model = pretrained.dns64().cuda()
+            wav = convert_audio(wav.cuda(), org_sr, self.denoiser_model.sample_rate, self.denoiser_model.chin)
+
+            self.denoiser_model.eval()
+            wav = self.denoiser_model(wav[None])[0] ## denoised
+            wav = wav.data.cpu() ## cpu
+            
+            # Resample librosa
+            wav = torchaudio.functional.resample(wav, orig_freq = self.denoiser_model.sample_rate, new_freq= self.sampling_rate )
+            wav = wav.reshape(-1).numpy() ## return like numpy.array() from torch tensor
+        
         wav = wav[ ## sampling_rate = 22050
             int(self.sampling_rate * start) : int(self.sampling_rate * end)
         ].astype(np.float32) # (173996,)
@@ -309,6 +317,7 @@ class Preprocessor:
         print("Processing Data ...")
         print()
         print(f"Lang: {self.lang}")
+        print(f"SPEAKER_ID: {self.df.speaker_id.values[0]}")
         print()
         print(f"Sampling Rate: -[Resampled]-> {self.sampling_rate}")
         print()
