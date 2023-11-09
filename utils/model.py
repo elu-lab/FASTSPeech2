@@ -53,10 +53,11 @@ def get_vocoder(config, device):
     speaker = config["vocoder"]["speaker"]
 
     if name == "MelGAN":
-        vocoder = torch.hub.load('seungwonpark/melgan', 'melgan')
+        ## Doesn't work
+        vocoder = torch.hub.load('seungwonpark/melgan', 'melgan', trust_repo= True,) ## Not Working
+        # vocoder.eval()
+        # mel = torch.randn(1, 80, 234) # use your own mel-spectrogram here
         print(f"DownLoaded | seunwgwon Park's HiFi-GAN from torch hub | SR: 22050")
-        vocoder.eval()
-        vocoder.to(device)
 
         ## These below are not necessary; just try to avoid to modify codes of other parts :)
         denoiser = nn.Linear(2, 1)
@@ -73,7 +74,9 @@ def get_vocoder(config, device):
         return vocoder, vocoder_train_setup, denoiser 
     
     elif name == "HiFi-GAN-16k":
+
         from speechbrain.pretrained import HIFIGAN
+
         vocoder = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="tmpdir")
         print(f"DownLoaded | SpeechBrain's HiFi-GAN from speechbrain | SR: 16000")
         vocoder.eval()
@@ -105,6 +108,8 @@ def vocoder_infer(mels, model_config, preprocess_config,
 
         elif name == "HiFi-GAN-16k":
             # Running Vocoder (spectrogram-to-waveform)
+
+            mels = mels.detach().cpu()
             wavs = vocoder.decode_batch(mels)
             # wavs.shape = [1, 1, 99840] -(sequeeze())-> [1, 99840]
             wavs = wavs.squeeze(1).squeeze(1)
