@@ -36,6 +36,7 @@ from model.optimizer import *
 
 # Accelerate
 from accelerate import Accelerator
+from accelerate.utils import DistributedDataParallelKwargs
 from accelerate.utils import set_seed 
 
 # torchmallo & evaluate
@@ -183,7 +184,13 @@ def main(args, configs):
     ###########################################################################################
     # Accelerator : https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation #
     ###########################################################################################
-    accelerator = Accelerator(gradient_accumulation_steps = grad_acc_step, log_with="wandb")
+
+    # from accelerate.utils import DistributedDataParallelKwargs
+    kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
+    # accelerator = Accelerator(kwargs_handlers=[kwargs])
+    ## https://huggingface.co/docs/accelerate/package_reference/kwargs
+    
+    accelerator = Accelerator(gradient_accumulation_steps = grad_acc_step, log_with="wandb", kwargs_handlers=[kwargs])
 
     ### Model
     model, optimizer = get_model(args, configs, device = accelerator.device, train=True)
@@ -256,8 +263,8 @@ def main(args, configs):
     preview_table = wandb.Table(columns = ['STEP', 'FROM', 'Label Speech', 'Predicted Speech'])
 
     for epoch in trange(n_epochs, desc='Epoch'):
-        print(f"{g_}================================================= STEPS: [{step}/{total_step}] ================================================={sr_}")
-        print(f"{s_}================================================= EPOCH: [{epoch}/{n_epochs}] ================================================={sr_}")
+        print(f"{g_}========================== STEPS: [{step}/{total_step}] =========================={sr_}", end ="\n" )
+        print(f"{s_}========================== EPOCH: [{epoch}/{n_epochs}] =========================={sr_}", end ="\n" )
         print("STARTING")
 
         with TorchTracemalloc() as tracemalloc:
@@ -310,7 +317,7 @@ def main(args, configs):
                             ## wandb logging
                             accelerator.log({"Train/Total_loss": losses[0],
                                             "Train/Mel_loss" : losses[1],
-                                            "Train/Mel_PostNet_loss" : losses[2],
+                                            "Train/Mel_PostNet_loss" : losses[2], ## T4MR_10 this is mel_loss
                                             "Train/Pitch_loss" : losses[3],
                                             "Train/Energy_loss": losses[4],
                                             "Train/Duration_loss": losses[5],
@@ -402,7 +409,7 @@ def main(args, configs):
             print(f"{s_} {epoch} EPOCH is completed{sr_}")
 
 
-        print(f"{b_}================================================== Training_EP:[{epoch}/{n_epochs}]_STEP:[{step}] ==================================================")
+        print(f"{b_}========================== Training_EP:[{epoch}/{n_epochs}]_STEP:[{step}] ==========================", end ="\n" )
         # Printing the GPU memory usage details such as allocated memory, peak memory, and total memory usage
         accelerator.print("GPU Memory before entering the train : {}".format(b2mb(tracemalloc.begin)))
         accelerator.print("GPU Memory consumed at the end of the train (end-begin): {}".format(tracemalloc.used))
@@ -422,7 +429,7 @@ def main(args, configs):
                 )
             )
         
-        print(f"{b_}==================================================================================================================================={sr_}")
+        print(f"{b_}========================================================================================================{sr_}", end ="\n" )
         print()
     
     #########################################
@@ -452,7 +459,7 @@ def main(args, configs):
     ## Sample Audio Added
     # wandb.log({'Visualization': preview_table})
     accelerator.log({'Sample Speeches': preview_table})
-    print(f"{m_}============================================================ Trainig is Over ============================================================{sr_}")
+    print(f"{m_}========================== Trainig is Over =========================={sr_}", end ="\n" )
 
     ## End of wandb Logging
     accelerator.end_training()
@@ -461,18 +468,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--restore_step", type=int, default=0)
     parser.add_argument('--seed', type = int, default = 2023, help="Seed")
-    parser.add_argument('--n_epochs', type = int, default = 840, help="Epochs")
+    parser.add_argument('--n_epochs', type = int, default = 750, help="Epochs")
 
     parser.add_argument('--save_epochs', type = int, default = 30, help="Model SAVE Epochs")
-    parser.add_argument('--save_start_step', type = int, default = 190000, help="Model SAVE function started when step reached this number")
+    parser.add_argument('--save_start_step', type = int, default = 50000, help="Model SAVE function started when step reached this number")
     parser.add_argument('--save_at_last', type = str, default = "True", help="Model SAVE After last step training.")
 
-    parser.add_argument('--synthesis_logging_epochs', type = int, default = 100, help="Sample logging Epochs")
+    parser.add_argument('--synthesis_logging_epochs', type = int, default = 50, help="Sample logging Epochs")
     parser.add_argument('--denoising_strength', type = float, default = 0.005, help="HiFiGAN's Denoiser - denoising_strength")
     # denoising_strength = 0.005
 
-    # parser.add_argument('--batch_size', type = int, default = 16, help="Batch Size") ### This is defined in yaml, this doesn't work
-    parser.add_argument('--group_size', type = int, default = 3, help="Group Size")
+    # parser.add_argument('--batch_size', type = int, default = 48, help="Batch Size")
+    parser.add_argument('--group_size', type = int, default = 1, help="Group Size")
     parser.add_argument('--project_name', type = str, default = "FastSpeech2_german", help="PROJECT NAME IN WANDB")
     parser.add_argument('--try_name', type = str, default = "Train_t01", help="Naming tries of PROJECT IN WANDB")
 
@@ -515,7 +522,13 @@ if __name__ == "__main__":
     configs = (preprocess_config, model_config, train_config)
 
     main(args, configs)
-    # accelerate config
-    # CUDA_VISIBLE_DEVICES=1 accelerate launch train.py --n_epochs 990 --save_epochs 50 --synthesis_logging_epochs 30 --try_name T4_MoRrgetda
 
-    ## wandb login --relogin '##### Token Key #######'
+    ### You can train with this command below
+    # 1) wandb log-in in cli
+    # $ wandb login --relogin '##### Token Key #######'
+    # 2) you can set your training environment
+    # $ accelerate config
+    # 3) Run
+    # $ CUDA_VISIBLE_DEVICES=1 accelerate launch train.py --n_epochs 990 --save_epochs 50 --synthesis_logging_epochs 30 --try_name Experiment_01
+
+
