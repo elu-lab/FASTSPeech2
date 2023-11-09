@@ -1,6 +1,4 @@
-
 #### Github[config.LibriTTS.model.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/model.yaml
-
 transformer:
   encoder_layer: 4
   encoder_head: 2
@@ -36,5 +34,5 @@ multi_speaker: True
 max_seq_len: 1000
 
 vocoder:
-  model: "HiFi-GAN" # "HiFi-GAN" # support 'HiFi-GAN', 'MelGAN'
+  model: "HiFi-GAN" # support 'HiFi-GAN', 'MelGAN'
   speaker: "universal" # support  'LJSpeech', 'universal'
