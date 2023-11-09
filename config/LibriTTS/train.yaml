@@ -1,9 +1,9 @@
 path:
-  ckpt_path: '/home/heiscold/prac/ckpt' # "./output/ckpt/LibriTTS"
-  log_path: '/home/heiscold/prac/log' # "./output/log/LibriTTS"
-  result_path: '/home/heiscold/prac/result' # "./output/result/LibriTTS"
+  ckpt_path: '/home/heiscold/outcome_german/t4mr_14_love_1k/ckpt' # "./output/ckpt/LibriTTS"
+  log_path: '/home/heiscold/outcome_german/t4mr_14_1ove_1k/log' # "./output/log/LibriTTS"
+  result_path: '/home/heiscold/outcome_german/t4mr_14_love_1k/result' # "./output/result/LibriTTS"
 optimizer:
-  batch_size: 16
+  batch_size: 48
   betas: [0.9, 0.98]
   eps: 0.000000001
   weight_decay: 0.0
