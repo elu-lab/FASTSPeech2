@@ -32,9 +32,9 @@ class FastSpeech2(nn.Module):
                                     )
         
         ## T4MR_16 ~
-        self.use_postnet = model_config["fastspeech_two"]["use_posetnet"],
-        if self.use_postnet:
-            self.postnet = PostNet()
+        # self.use_postnet = model_config["fastspeech_two"]["use_posetnet"],
+        # if self.use_postnet:
+        #     self.postnet = PostNet()
 
         #### In this Part, We go as 'None'
         self.speaker_emb = None
@@ -95,16 +95,9 @@ class FastSpeech2(nn.Module):
         ## T4MR_10 ~ T4MR_15 Code
         ## PostNet: Officially Not in FastSpeech2 Paper -> This is why out in T4MR_10
         
-        ## T4MR_16 Code
-        if self.use_postnet:
-            postnet_output = self.postnet(output) + output
-        else:
-            postnet_output = output
-
         return (
-            output,
-            # output, # postnet_output, ## T4MR_10: PostNet_output Removed. ## And replaced like below: 
-            postnet_output, ## T4MR_16 ~
+            output, # postnet_output, ## T4MR_10: PostNet_output Removed. ## And replaced like below: 
+            output, 
             p_predictions,
             e_predictions,
             log_d_predictions,
