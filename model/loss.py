@@ -26,7 +26,7 @@ class FastSpeech2Loss(nn.Module):
             self.ssim_loss_module = SSIM(size_average=True, channel=1)
         if self.ms_ssim:
             self.ms_ssim_loss_module = MS_SSIM(size_average=True, channel=1)
-
+            self.alpha = 0.84
         ## T4Mr_16 ~
         self.use_postnet = model_config["fastspeech_two"]["use_posetnet"]
         
@@ -128,7 +128,8 @@ class FastSpeech2Loss(nn.Module):
             mel_l1_loss = self.mae_loss(mel_predictions, mel_targets)
             
             ## L1 Loss + MS-SSIM Loss
-            mel_loss = mel_l1_loss + mel_ms_ssim_loss
+            # self.alpha = 0.84
+            mel_loss = self.alpha * mel_l1_loss + (1 - self.alpha) * mel_ms_ssim_loss
 
         else:
             ### L1 Loss 
@@ -137,7 +138,7 @@ class FastSpeech2Loss(nn.Module):
 
             ## mel_targets: [16, 1000, 80] -> [1280000]
             mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
-            mel_l1_loss = self.mae_loss(mel_predictions, mel_targets)
+            mel_loss = self.mae_loss(mel_predictions, mel_targets)
             ### -> mel_loss: (tensor(6.0874, grad_fn=<MeanBackward0>),)
 
 
@@ -174,7 +175,8 @@ class FastSpeech2Loss(nn.Module):
                 postnet_mel_l1_loss = self.mae_loss(postnet_mel_predictions, mel_targets)
 
                 ## L1 Loss + MS-SSIM Loss
-                postnet_mel_loss = postnet_mel_l1_loss + postnet_mel_ms_ssim_loss
+                postnet_mel_loss = self.alpha * postnet_mel_l1_loss + (1 - self.alpha) * postnet_mel_ms_ssim_loss
+                
             else:
                 ### L1 Loss
                 ## postnet_mel_predictions: [16, 1000, 80] -> [1280000]
