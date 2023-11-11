@@ -1,5 +1,5 @@
-#### Github[config.LibriTTS.model.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/model.yaml 
 
+#### Github[config.LibriTTS.model.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/model.yaml
 transformer:
   encoder_layer: 4
   encoder_head: 2
@@ -44,8 +44,8 @@ fastspeech_two:
   use_posetnet: False
 
 loss_module:
-  ssim: True
-  ms_ssim: False
+  mel_loss: "L1"         ## support "L1", "ssim", "ms_ssim"
+  postnet_mel_loss: "L1" ## support "L1", "ssim", "ms_ssim"
 
 # gst:
 #   use_gst: False
