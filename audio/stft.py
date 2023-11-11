@@ -1,29 +1,25 @@
-## Github
-## audio folder: https://github.com/ming024/FastSpeech2/blob/master/audio
-##  ㄴ stft.py : https://github.com/ming024/FastSpeech2/blob/master/audio/stft.py
-##  ㄴ audio_processing: https://github.com/ming024/FastSpeech2/blob/master/audio/audio_processing.py
-##  ㄴ tools.py: https://github.com/ming024/FastSpeech2/blob/master/audio/tools.py
+"""
+Github[ming024]audio folder: https://github.com/ming024/FastSpeech2/blob/master/audio
+  ㄴ stft.py : https://github.com/ming024/FastSpeech2/blob/master/audio/stft.py
+  ㄴ audio_processing: https://github.com/ming024/FastSpeech2/blob/master/audio/audio_processing.py
+  ㄴ tools.py: https://github.com/ming024/FastSpeech2/blob/master/audio/tools.py
 
-
-#### config/LibriTTS/preprocess.yaml: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
-#   audio:
-#     sampling_rate: 22050
-#     max_wav_value: 32768.0
-#   stft:
-#     filter_length: 1024
-#     hop_length: 256
-#     win_length: 1024
-#   mel:
-#     n_mel_channels: 80
-#     mel_fmin: 0
-#     mel_fmax: 8000 # please set to 8000 for HiFi-GAN vocoder, set to null for MelGAN vocoder
-
+config/LibriTTS/preprocess.yaml: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
+   audio:
+     sampling_rate: 22050
+     max_wav_value: 32768.0
+   stft:
+     filter_length: 1024
+     hop_length: 256
+     win_length: 1024
+   mel:
+     n_mel_channels: 80
+     mel_fmin: 0
+     mel_fmax: 8000 # please set to 8000 for HiFi-GAN vocoder, set to null for MelGAN vocoder
+"""
 import numpy as np
-# import pandas as pd
-# import matplotlib.pyplot as plt
 
 import librosa
-# import librosa.display
 import librosa.util as librosa_util
 from librosa.filters import mel as librosa_mel_fn
 from librosa.util import pad_center, tiny
@@ -33,7 +29,6 @@ from scipy.signal import get_window
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-# import IPython.display as ipd
 
 
 ################### @ STFT ################################
@@ -53,7 +48,7 @@ def window_sumsquare(
     n = n_fft + hop_length * (n_frames - 1) ## n : audio length? aprrocimate? # 326400 
     x = np.zeros(n, dtype=dtype)            ## np.zeros (Length of n)         # 326400 
 
-    # # Compute the squared window at the desired length
+    ## Compute the squared window at the desired length
     win_sq = get_window(window, win_length, fftbins=True) ## window = hann ## (1024)
     win_sq = librosa_util.normalize(win_sq, norm=norm) ** 2 ## Energy??? Power? ## (1024)
     win_sq = librosa_util.pad_center(data =win_sq, size = n_fft)
