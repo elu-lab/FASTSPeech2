@@ -1,11 +1,11 @@
 dataset: "LibriTTS"
 
 path:
-  df_path: "/home/heiscold/preprocessed/german_one_speaker_2037_rs_22k_seq1500/german_one_speaker_2037_13k_triagnle.csv"
+  df_path: "/home/heiscold/preprocessed/german_one_speaker_rs_22k_seq_1k/train_ger_13100_one_speaker_10148.csv"
   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
   lexicon_path: "lexicon/librispeech-lexicon.txt"
   raw_path: "./raw_data/LibriTTS" # in_dir
-  preprocessed_path: "/home/heiscold/preprocessed/german_one_speaker_2037_rs_22k_seq1k" # "./preprocessed_data/LibriTTS" # out
+  preprocessed_path: "/home/heiscold/preprocessed/german_one_speaker_rs_22k_seq_1k" # "./preprocessed_data/LibriTTS" # out
 
 preprocessing:
   val_size: 512
