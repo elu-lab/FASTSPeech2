@@ -104,23 +104,40 @@ class FastSpeech2Loss(nn.Module):
 
             ## mel_predictions: [16, 1000, 80]
             ## mel_targets: [16, 1000, 80]
-            mel_loss = 1 - self.ssim_loss_module(mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+            mel_ssim_loss = 1 - self.ssim_loss_module(mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+
+            ## L1 Loss
+            mel_predictions = mel_predictions.masked_select(mel_masks.unsqueeze(-1))
+            mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
+            mel_l1_loss = self.mae_loss(mel_predictions, mel_targets)
+
+            ## L1 Loss + SSIM Loss
+            mel_loss = mel_l1_loss + mel_ssim_loss
+
         elif self.ms_ssim:
             # self.ms_ssim_loss_module = MS_SSIM(size_average=True, channel=1)
             # ms_ssim_loss = 1 - self.ms_ssim_loss_module(X.unsqueeze(1), Y.unsqueeze(1))
 
             ## mel_predictions: [16, 1000, 80]
             ## mel_targets: [16, 1000, 80]
-            mel_loss = 1 - self.ms_ssim_loss_module(mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+            mel_ms_ssim_loss = 1 - self.ms_ssim_loss_module(mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+
+            ## L1 Loss
+            mel_predictions = mel_predictions.masked_select(mel_masks.unsqueeze(-1))
+            mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
+            mel_l1_loss = self.mae_loss(mel_predictions, mel_targets)
+            
+            ## L1 Loss + MS-SSIM Loss
+            mel_loss = mel_l1_loss + mel_ms_ssim_loss
+
         else:
-            ### This is Original 
+            ### L1 Loss 
             ## mel_predictions: [16, 1000, 80] -> [1280000]
             mel_predictions = mel_predictions.masked_select(mel_masks.unsqueeze(-1))
 
             ## mel_targets: [16, 1000, 80] -> [1280000]
             mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
-        
-            mel_loss = self.mae_loss(mel_predictions, mel_targets)
+            mel_l1_loss = self.mae_loss(mel_predictions, mel_targets)
             ### -> mel_loss: (tensor(6.0874, grad_fn=<MeanBackward0>),)
 
 
@@ -133,22 +150,39 @@ class FastSpeech2Loss(nn.Module):
 
                 ## postnet_mel_predictions: [16, 1000, 80]
                 ## mel_targets: [16, 1000, 80]
-                postnet_mel_loss = 1 - self.ssim_loss_module(postnet_mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+                postnet_mel_ssim_loss = 1 - self.ssim_loss_module(postnet_mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+
+                ## L1 Loss
+                postnet_mel_predictions = postnet_mel_predictions.masked_select(mel_masks.unsqueeze(-1))
+                mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
+                postnet_mel_l1_loss = self.mae_loss(postnet_mel_predictions, mel_targets)
+
+                ## L1 Loss + SSIM Loss
+                postnet_mel_loss = postnet_mel_l1_loss + postnet_mel_ssim_loss
+
             elif self.ms_ssim:
                 # self.ms_ssim_loss_module = MS_SSIM(size_average=True, channel=1)
                 # ms_ssim_loss = 1 - self.ms_ssim_loss_module(X.unsqueeze(1), Y.unsqueeze(1))
 
                 ## postnet_mel_predictions: [16, 1000, 80]
                 ## mel_targets: [16, 1000, 80]
-                postnet_mel_loss = 1 - self.ms_ssim_loss_module(postnet_mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+                postnet_mel_ms_ssim_loss = 1 - self.ms_ssim_loss_module(postnet_mel_predictions.unsqueeze(1), mel_targets.unsqueeze(1))
+
+                ## L1 Loss
+                postnet_mel_predictions = postnet_mel_predictions.masked_select(mel_masks.unsqueeze(-1))
+                mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
+                postnet_mel_l1_loss = self.mae_loss(postnet_mel_predictions, mel_targets)
+
+                ## L1 Loss + MS-SSIM Loss
+                postnet_mel_loss = postnet_mel_l1_loss + postnet_mel_ms_ssim_loss
             else:
-                ### This is Original 
+                ### L1 Loss
                 ## postnet_mel_predictions: [16, 1000, 80] -> [1280000]
                 postnet_mel_predictions = postnet_mel_predictions.masked_select(mel_masks.unsqueeze(-1))
 
                 ## mel_targets: [16, 1000, 80] -> [1280000]
                 mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
-            
+        
                 postnet_mel_loss = self.mae_loss(postnet_mel_predictions, mel_targets)
                 ### -> mel_loss: (tensor(6.0874, grad_fn=<MeanBackward0>),)
 
