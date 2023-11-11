@@ -21,16 +21,20 @@ class FastSpeech2(nn.Module):
 
     def __init__(self, preprocess_config, model_config, device):
         super(FastSpeech2, self).__init__()
-        self.model_config = model_config
         self.device = device
+        self.model_config = model_config
 
         self.encoder = Encoder(model_config)
         self.variance_adaptor = VarianceAdaptor(preprocess_config, model_config, self.device)
         self.decoder = Decoder(model_config)
-        self.mel_linear = nn.Linear( model_config["transformer"]["decoder_hidden"],                ## 256
-                                     preprocess_config["preprocessing"]["mel"]["n_mel_channels"],  ## 256
+        self.mel_linear = nn.Linear( model_config["transformer"]["decoder_hidden"],                
+                                     preprocess_config["preprocessing"]["mel"]["n_mel_channels"],  
                                     )
-        self.postnet = PostNet()
+        
+        ## T4MR_16 ~
+        self.use_postnet = model_config["fastspeech_two"]["use_posetnet"],
+        if self.use_postnet:
+            self.postnet = PostNet()
 
         #### In this Part, We go as 'None'
         self.speaker_emb = None
@@ -63,7 +67,6 @@ class FastSpeech2(nn.Module):
         if self.speaker_emb is not None:
             output = output + self.speaker_emb(speakers).unsqueeze(1).expand(-1, max_src_len, -1)
 
-        
         (output, 
          p_predictions, 
          e_predictions, 
@@ -82,15 +85,26 @@ class FastSpeech2(nn.Module):
              p_control, 
              e_control, 
              d_control,)
-        
+
         output, mel_masks = self.decoder(output, mel_masks)
         output = self.mel_linear(output)
 
-        postnet_output = self.postnet(output) + output
+        ## Original
+        # postnet_output = self.postnet(output) + output
+
+        ## T4MR_10 ~ T4MR_15 Code
+        ## PostNet: Officially Not in FastSpeech2 Paper -> This is why out in T4MR_10
+        
+        ## T4MR_16 Code
+        if self.use_postnet:
+            postnet_output = self.postnet(output) + output
+        else:
+            postnet_output = output
 
         return (
             output,
-            postnet_output,
+            # output, # postnet_output, ## T4MR_10: PostNet_output Removed. ## And replaced like below: 
+            postnet_output, ## T4MR_16 ~
             p_predictions,
             e_predictions,
             log_d_predictions,
