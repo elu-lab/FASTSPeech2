@@ -1,5 +1,5 @@
-
 #### Github[config.LibriTTS.model.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/model.yaml
+
 transformer:
   encoder_layer: 4
   encoder_head: 2
