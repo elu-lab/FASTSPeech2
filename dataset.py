@@ -1,40 +1,41 @@
-## Github[dataset.py]: https://github.com/ming024/FastSpeech2/blob/master/dataset.py
-## Github[config.LibriTTS.preprocess.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
-## Github[config.LibriTTS.train.yaml] : https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/train.yaml
-## Github[utils.tools]: https://github.com/ming024/FastSpeech2/blob/master/utils/tools.py#L265
+"""
+Github[dataset.py]: https://github.com/ming024/FastSpeech2/blob/master/dataset.py
+Github[config.LibriTTS.preprocess.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
+Github[config.LibriTTS.train.yaml] : https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/train.yaml
+Github[utils.tools]: https://github.com/ming024/FastSpeech2/blob/master/utils/tools.py#L265
 
 ######### Github[config.LibriTTS.preprocess.yaml ##############
-# dataset: "LibriTTS"
-# path:
-#   df_path: "/home/heiscold/prac/train_part_13k_german.csv"
-#   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
-#   lexicon_path: "lexicon/librispeech-lexicon.txt"
-#   raw_path: "./raw_data/LibriTTS" # in_dir
-#   preprocessed_path: "/home/heiscold/prac/" # "./preprocessed_data/LibriTTS" # out_dir
+ dataset: "LibriTTS"
+ path:
+   df_path: "/home/heiscold/prac/train_part_13k_german.csv"
+   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
+   lexicon_path: "lexicon/librispeech-lexicon.txt"
+   raw_path: "./raw_data/LibriTTS" # in_dir
+   preprocessed_path: "/home/heiscold/prac/" # "./preprocessed_data/LibriTTS" # out_dir
 
-# preprocessing:
-#   val_size: 512
-#   text:
-#     text_cleaners: ["english_cleaners"]
-#     language: "german"
-#   audio:
-#     sampling_rate: 22050
-#     max_wav_value: 32768.0
-#   stft:
-#     filter_length: 1024
-#     hop_length: 256
-#     win_length: 1024
-#   mel:
-#     n_mel_channels: 80
-#     mel_fmin: 0
-#     mel_fmax: 8000 # please set to 8000 for HiFi-GAN vocoder, set to null for MelGAN vocoder
-#   pitch:
-#     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
-#     normalization: True
-#   energy:
-#     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
-#     normalization: True
-
+ preprocessing:
+   val_size: 512
+   text:
+     text_cleaners: ["english_cleaners"]
+     language: "german"
+   audio:
+     sampling_rate: 22050
+     max_wav_value: 32768.0
+   stft:
+     filter_length: 1024
+     hop_length: 256
+     win_length: 1024
+   mel:
+     n_mel_channels: 80
+     mel_fmin: 0
+     mel_fmax: 8000 # please set to 8000 for HiFi-GAN vocoder, set to null for MelGAN vocoder
+   pitch:
+     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
+     normalization: True
+   energy:
+     feature: "phoneme_level" # support 'phoneme_level' or 'frame_level'
+     normalization: True
+"""
 
 import json
 import math
