@@ -1,37 +1,30 @@
-### Github[SubLayers.py]: https://github.com/ming024/FastSpeech2/blob/master/transformer/SubLayers.py
-## Github[utils.tools]: https://github.com/ming024/FastSpeech2/blob/master/utils/tools.py#L265
+"""
+Github[SubLayers.py]: https://github.com/ming024/FastSpeech2/blob/master/transformer/SubLayers.py
 
-### Github[train.py] https://github.com/ming024/FastSpeech2/blob/master/train.py
-### Forward
-### output = model(*(batch[2:])) 
+----- Github[transformer.Constants.py]: https://github.com/ming024/FastSpeech2/blob/master/transformer/Constants.py
+ PAD = 0
+ UNK = 1
+ BOS = 2
+ EOS = 3
 
-### Github[model.fastspeech2.py] : https://github.com/ming024/FastSpeech2/blob/master/model/fastspeech2.py
-### output = self.encoder(texts, src_masks)
-### texts is the only input of the Encoder
+ PAD_WORD = "<blank>"
+ UNK_WORD = "<unk>"
+ BOS_WORD = "<s>"
+ EOS_WORD = "</s>"
 
-### Github[transformer.Constants.py]: https://github.com/ming024/FastSpeech2/blob/master/transformer/Constants.py
-# PAD = 0
-# UNK = 1
-# BOS = 2
-# EOS = 3
-
-# PAD_WORD = "<blank>"
-# UNK_WORD = "<unk>"
-# BOS_WORD = "<s>"
-# EOS_WORD = "</s>"
-
-#### Github[config.LibriTTS.model.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/model.yaml
-# transformer:
-#   encoder_layer: 4
-#   encoder_head: 2
-#   encoder_hidden: 256
-#   decoder_layer: 6
-#   decoder_head: 2
-#   decoder_hidden: 256
-#   conv_filter_size: 1024
-#   conv_kernel_size: [9, 1]
-#   encoder_dropout: 0.2
-#   decoder_dropout: 0.2
+----- Github[config.LibriTTS.model.yaml]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/model.yaml
+ transformer:
+   encoder_layer: 4
+   encoder_head: 2
+   encoder_hidden: 256
+   decoder_layer: 6
+   decoder_head: 2
+   decoder_hidden: 256
+   conv_filter_size: 1024
+   conv_kernel_size: [9, 1]
+   encoder_dropout: 0.2
+   decoder_dropout: 0.2
+"""
 
 import copy
 import numpy as np
