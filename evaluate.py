@@ -1,4 +1,5 @@
 ############## Github[evaluate.py]: https://github.com/ming024/FastSpeech2/blob/master/evaluate.py ####################
+
 import os
 import argparse
 import yaml
@@ -9,9 +10,6 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 # from torch.utils.tensorboard import SummaryWriter
-
-## T4MR_16 ~
-from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 import accelerate
 from accelerate import Accelerator
@@ -122,7 +120,7 @@ def evaluate_fn(model,
         print(f"Validation @ {step}: Firnished")
 
     if accelerate is not None:
-        print(f"{y_}========================== Validation_STEP:[{step}]==========================", end ="\n" )
+        print(f"{y_}==================== Validation_STEP:[{step}]====================", end ="\n" )
         # Printing the GPU memory usage details such as allocated memory, peak memory, and total memory usage
         accelerator.print("GPU Memory before entering the train : {}".format(b2mb(tracemalloc.begin)))
         accelerator.print("GPU Memory consumed at the end of the train (end-begin): {}".format(tracemalloc.used))
@@ -141,7 +139,7 @@ def evaluate_fn(model,
                 tracemalloc.cpu_peaked + b2mb(tracemalloc.cpu_begin)
                 )
             )
-        print(f"{y_}========================================================================================================{sr_}", end ="\n" )
+        print(f"{y_}================================================{sr_}", end ="\n" )
         print()
 
 
