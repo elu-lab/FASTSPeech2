@@ -1,9 +1,16 @@
 # FASTSPeech2
- TTS(= Text-To-Speech) Model for researching. This Repository is mainly based on [ming024/FastSpeech2](https://github.com/ming024/FastSpeech2) and modified or added some codes for our team's dataset. We use [MLS(=Multilingual LibriSpeech)](https://www.openslr.org/94/) dataset for training. 
+ TTS(= Text-To-Speech) Model for researching. This Repository is mainly based on [ming024/FastSpeech2](https://github.com/ming024/FastSpeech2) and modified or added some codes for our team's dataset. We use [AI-HUB: Multi-Speaker-Speech](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=542) dataset and [MLS(=Multilingual LibriSpeech)](https://www.openslr.org/94/) dataset for training. 
 
 
 ## Languages
  We trained FastSpeech2 Model following languages with introducing each language's phonsets we embedded and trained. We used [`Montreal-Forced Alignment`](https://montreal-forced-aligner.readthedocs.io/en/latest/user_guide/workflows/alignment.html) tool to obtain the alignments between the utterances and the phoneme sequences as described in the [paper](https://arxiv.org/pdf/2006.04558.pdf). As you can see, we embedded [`IPA Phoneset`](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet). 
+<details>
+<summary>Korean</summary>
+<div>
+<a href="https://mfa-models.readthedocs.io/en/latest/dictionary/Korean/Korean%20MFA%20dictionary%20v2_0_0a.html">French MFA dictionary v2.0.0a</a> : <code style="white-space:nowrap;"> 'b d dʑ e eː h i iː j k kʰ k̚ k͈ m n o oː p pʰ p̚ p͈ s sʰ s͈ t tɕ tɕʰ tɕ͈ tʰ t̚ t͈ u uː w x ç ŋ ɐ ɕʰ ɕ͈ ɛ ɛː ɡ ɣ ɥ ɦ ɨ ɨː ɭ ɰ ɲ ɸ ɾ ʌ ʌː ʎ ʝ β'</code>
+</div>
+</details>
+
 <details>
 <summary>German</summary>
 <div>
@@ -18,12 +25,6 @@
 </div>
 </details>
 
-<details>
-<summary>French</summary>
-<div>
-<a href="https://mfa-models.readthedocs.io/en/latest/dictionary/French/French%20MFA%20dictionary%20v2_0_0a.html">French MFA dictionary v2.0.0a</a> : <code style="white-space:nowrap;"> b c d dʒ e f i j k l m mʲ n o p s t ts tʃ u v w y z ø ŋ œ ɑ ɑ̃ ɔ ɔ̃ ə ɛ ɛ̃ ɟ ɡ ɥ ɲ ʁ ʃ ʎ ʒ</code>
-</div>
-</details>
 
 
 ## wandb [![wandb](https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-gradient.svg)](https://wandb.ai/wako/FastSpeech2_german)
@@ -33,7 +34,7 @@
 
 
 ## Preprocess
- This `preprocess.py` can give you the alignments described above. You can get type of alignment data as `TextGrid` after run `preprocess.py`.
+ This `preprocess.py` can give you the pitch, energy, duration and phones from `TextGrid` files. 
 ```
 python preprocess.py config/LibriTTS/preprocess.yaml 
 ```
