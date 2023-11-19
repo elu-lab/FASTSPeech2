@@ -1,14 +1,12 @@
 path:
 
-  ## t4mr_17
-  ## /home/heiscold/preprocessed/german_one_speaker_rs_22k_seq_1k/train_ger_13100_one_speaker_10148.csv
-  ## based on the preprocessed data of t4mr_10 //
-  ckpt_path: '/home/heiscold/outcome_german/t4mr_17/ckpt' # "./output/ckpt/LibriTTS"
-  log_path: '/home/heiscold/outcome_german/t4mr_17/log' # "./output/log/LibriTTS"
-  result_path: '/home/heiscold/outcome_german/t4mr_17/result' # "./output/result/LibriTTS"
+  ## t4mr_23: Korean - single speaker
+  ckpt_path: '/home/heiscold/outcome_kor/t23_you_just_choose_ur_burden/ckpt' # "./output/ckpt/LibriTTS"
+  log_path: '/home/heiscold/outcome_kor/t23_you_just_choose_ur_burden/log' # "./output/log/LibriTTS"
+  result_path: '/home/heiscold/outcome_kor/t23_you_just_choose_ur_burden/result' # "./output/result/LibriTTS"
 
 optimizer:
-  batch_size: 48
+  batch_size: 64 # 16, 48, 64
   betas: [0.9, 0.98]
   eps: 0.000000001
   weight_decay: 0.0
