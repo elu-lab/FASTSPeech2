@@ -2,10 +2,6 @@
 import torch
 import torch.nn as nn
 
-## T4MR_16 ~
-from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
-
-
 #################################### @ train.py ##############################################
 class FastSpeech2Loss(nn.Module):
     """ FastSpeech2 Loss """
@@ -16,6 +12,8 @@ class FastSpeech2Loss(nn.Module):
         self.energy_feature_level = preprocess_config["preprocessing"]["energy"]["feature"]
         self.mse_loss = nn.MSELoss()
         self.mae_loss = nn.L1Loss()
+
+        self.use_postnet = model_config["fastspeech_two"]["use_posetnet"]
         
 
     def forward(self, inputs, predictions):
@@ -78,9 +76,6 @@ class FastSpeech2Loss(nn.Module):
         ## mel_predictions: [16, 1000, 80] -> [1280000]
         mel_predictions = mel_predictions.masked_select(mel_masks.unsqueeze(-1))
 
-        ## postnet_mel_predictions: [16, 1000, 80] -> [1280000]
-        postnet_mel_predictions = postnet_mel_predictions.masked_select(mel_masks.unsqueeze(-1))
-
         ## mel_targets: [16, 1000, 80] -> [1280000]
         mel_targets = mel_targets.masked_select(mel_masks.unsqueeze(-1))
 
@@ -94,12 +89,34 @@ class FastSpeech2Loss(nn.Module):
         ## energy_loss: tensor(1.8249, grad_fn=<MseLossBackward0>),
         ## duration_loss: tensor(5.1772, grad_fn=<MseLossBackward0>))
 
-        total_loss = (mel_loss + duration_loss + pitch_loss + energy_loss)
-    
-        return (
-            total_loss,
-            mel_loss,
-            mel_loss,
-            pitch_loss,
-            energy_loss,
-            duration_loss,)
+        if self.use_postnet:
+
+            ## postnet_mel_predictions: [16, 1000, 80] -> [1280000]
+            postnet_mel_predictions = postnet_mel_predictions.masked_select(mel_masks.unsqueeze(-1))
+
+            postnet_mel_loss = self.mae_loss(postnet_mel_predictions, mel_targets)
+            # postnet_mel_loss: (tensor(6.0874, grad_fn=<MeanBackward0>),)
+
+            total_loss = (mel_loss + postnet_mel_loss + duration_loss + pitch_loss + energy_loss)
+
+            return (
+                total_loss,
+                mel_loss,
+                postnet_mel_loss,
+                pitch_loss,
+                energy_loss,
+                duration_loss,
+            )
+
+        else:
+
+            ## without postnet
+            total_loss = (mel_loss + duration_loss + pitch_loss + energy_loss)
+        
+            return (
+                total_loss,
+                mel_loss,
+                mel_loss,
+                pitch_loss,
+                energy_loss,
+                duration_loss,)
