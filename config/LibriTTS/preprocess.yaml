@@ -1,20 +1,19 @@
 dataset: "LibriTTS"
 
 path:
-  df_path: "/home/heiscold/preprocessed/german_one_speaker_rs_22k_seq_1k/train_ger_13100_one_speaker_10148.csv"
+  df_path: "/home/heiscold/preprocessed/kor_8505_pure_rs22k_nr/kr_8505.csv"
   corpus_path: "/home/ming/Data/LibriTTS/train-clean-360" 
   lexicon_path: "lexicon/librispeech-lexicon.txt"
   raw_path: "./raw_data/LibriTTS" # in_dir
-  preprocessed_path: "/home/heiscold/preprocessed/german_one_speaker_rs_22k_seq_1k" # "./preprocessed_data/LibriTTS" # out
+  preprocessed_path: "/home/heiscold/preprocessed/kor_8505_pure_rs22k_nr" # "./preprocessed_data/LibriTTS" # out
 
 preprocessing:
   val_size: 512
   text:
     text_cleaners: ["transliteration_cleaners"] # ["english_cleaners"] # ["transliteration_cleaners"]
-    language: "german"
+    language: "kor_ai_hub"
   audio:
-    load_audio_library : 'torchaudio' # support 'torchaudio'
-    denoiser: False 
+    denoiser: "non-stationary-noise-reduction"
     sampling_rate: 22050
     max_wav_value: 32768.0
   stft:
@@ -22,7 +21,7 @@ preprocessing:
     hop_length: 256
     win_length: 1024
   mel:
-    n_mel_channels: 80
+    n_mel_channels: 80  
     mel_fmin: 0
     mel_fmax: 8000 # please set to 8000 for HiFi-GAN vocoder, set to null for MelGAN vocoder
   pitch:
