@@ -1,10 +1,11 @@
-############## Github[train.py]: https://github.com/ming024/FastSpeech2/blob/master/train.py ####################
-
+## Github[train.py]: https://github.com/ming024/FastSpeech2/blob/master/train.py 
 import os
-import yaml
 import gc 
+import yaml
+import argparse
 
 import numpy as np
+import pandas as pd
 
 import matplotlib.pyplot as plt
 
@@ -13,9 +14,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 # from torch.utils.tensorboard import SummaryWriter
-
-## T4MR_16 ~
-from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 # from utils.utils import to_device
 import wandb 
@@ -181,8 +179,9 @@ def main(args, configs):
 
     sampling_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
     sample_rate = preprocess_config["preprocessing"]["audio"][ "sampling_rate" ]
-    print(f"sampling_rate(=sample_rate): {sampling_rate}", end ="\n" )
-    
+    print(f"sampling_rate(=sample_rate): {sampling_rate}")
+    print()
+
     ###########################################################################################
     # Accelerator : https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation #
     ###########################################################################################
@@ -215,6 +214,7 @@ def main(args, configs):
     ### To Device
     model, vocoder, denoiser, loss_fn, optimizer, train_loader, valid_loader = accelerator.prepare(model, vocoder, denoiser, loss_fn, optimizer, train_loader, valid_loader)
     print("Accelerate Prepared:")
+    
     ## model cuda? Check!
     print("MODEL IS CUDA? :", next(model.parameters()).is_cuda)
     print()
@@ -262,7 +262,7 @@ def main(args, configs):
     print(f"Vocoder(=HiFi-GAN)'s denoising_strength: {denoising_strength}")
 
     ## This is for wandb Audio Added
-    preview_table = wandb.Table(columns = ['STEP', 'FROM', 'Label Speech', 'Predicted Speech'])
+    # preview_table = wandb.Table(columns = ['STEP', 'FROM', 'Label Speech', 'Predicted Speech'])
 
     for epoch in trange(n_epochs, desc='Epoch'):
         print(f"{g_}========================== STEPS: [{step}/{total_step}] =========================={sr_}", end ="\n" )
@@ -346,9 +346,9 @@ def main(args, configs):
                             accelerator.log({ 'Train/Mel_SPectrogram' : wandb.Image(fig) })
 
                             ## wandb Add Audio 
-                            label_audio = wandb.Audio(wav_reconstruction, sample_rate = 22050)
-                            predict_audio = wandb.Audio(wav_prediction, sample_rate = 22050)
-                            preview_table.add_data(step, 'TRAIN', label_audio, predict_audio)
+                            # label_audio = wandb.Audio(wav_reconstruction, sample_rate = 22050)
+                            # predict_audio = wandb.Audio(wav_prediction, sample_rate = 22050)
+                            # preview_table.add_data(step, 'TRAIN', label_audio, predict_audio)
 
 
                         ############
@@ -371,9 +371,9 @@ def main(args, configs):
                             accelerator.log({'Eval/Mel_SPectrogram' : wandb.Image(fig) })
 
                             ## wandb Add Audio 
-                            label_audio = wandb.Audio(sample_audios_from_vals[0], sample_rate = 22050)
-                            predict_audio = wandb.Audio(sample_audios_from_vals[1], sample_rate = 22050)
-                            preview_table.add_data(step, 'EVAL', label_audio, predict_audio)
+                            # label_audio = wandb.Audio(sample_audios_from_vals[0], sample_rate = 22050)
+                            # predict_audio = wandb.Audio(sample_audios_from_vals[1], sample_rate = 22050)
+                            # preview_table.add_data(step, 'EVAL', label_audio, predict_audio)
                             
                             #################### Tensorboard Logging ######################
                             # with open(os.path.join(val_log_path, "log.txt"), "a") as f:
@@ -431,7 +431,7 @@ def main(args, configs):
                 )
             )
         
-        print(f"{b_}========================================================================================================{sr_}", end ="\n" )
+        print(f"{b_}============================================================================{sr_}", end ="\n" )
         print()
     
     #########################################
@@ -460,7 +460,7 @@ def main(args, configs):
 
     ## Sample Audio Added
     # wandb.log({'Visualization': preview_table})
-    accelerator.log({'Sample Speeches': preview_table})
+    # accelerator.log({'Sample Speeches': preview_table})
     print(f"{m_}========================== Trainig is Over =========================={sr_}", end ="\n" )
 
     ## End of wandb Logging
@@ -482,7 +482,7 @@ if __name__ == "__main__":
 
     # parser.add_argument('--batch_size', type = int, default = 48, help="Batch Size")
     parser.add_argument('--group_size', type = int, default = 1, help="Group Size")
-    parser.add_argument('--project_name', type = str, default = "FastSpeech2_german", help="PROJECT NAME IN WANDB")
+    parser.add_argument('--project_name', type = str, default = "FASTSpeech2", help="PROJECT NAME IN WANDB")
     parser.add_argument('--try_name', type = str, default = "Train_t01", help="Naming tries of PROJECT IN WANDB")
 
     parser.add_argument(
@@ -524,13 +524,4 @@ if __name__ == "__main__":
     configs = (preprocess_config, model_config, train_config)
 
     main(args, configs)
-
-    ### You can train with this command below
-    # 1) wandb log-in in cli
-    # $ wandb login --relogin '##### Token Key #######'
-    # 2) you can set your training environment
-    # $ accelerate config
-    # 3) Run
-    # $ CUDA_VISIBLE_DEVICES=1 accelerate launch train.py --n_epochs 990 --save_epochs 50 --synthesis_logging_epochs 30 --try_name Experiment_01
-
 
