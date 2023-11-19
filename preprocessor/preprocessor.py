@@ -1,5 +1,5 @@
 ## Github[preprocessor.py]: https://github.com/ming024/FastSpeech2/blob/master/preprocessor/preprocessor.py
-## Github[config][preprocess]: https://github.com/ming024/FastSpeech2/blob/master/config/LibriTTS/preprocess.yaml
+
 import os
 import random
 import json
@@ -15,10 +15,12 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 import torch
-import torchaudio
+# import torchaudio
 
-from denoiser import pretrained
-from denoiser.dsp import convert_audio
+from scipy.io import wavfile
+import noisereduce as nr
+import soundfile as sf
+# from noisereduce.generate_noise import band_limited_noise
 
 # import audio as Audio
 from audio.stft import *
@@ -76,16 +78,7 @@ class Preprocessor:
                 config["preprocessing"]["mel"]["mel_fmax"], # 8000
             )
         
-
-        self.load_audio_library = config["preprocessing"]["audio"]['load_audio_library']
-        print(f"Audio Library: {self.load_audio_library }")
-        
         self.denoiser = config["preprocessing"]["audio"]["denoiser"]
-        if self.denoiser:
-            print("Denoising & Resample PreProcessing")
-            self.denoiser_model = pretrained.dns64().cuda()
-        else:
-            print("Only Resample")
 
     def normalize(self, in_dir, mean, std):
         max_value = np.finfo(np.float64).min
@@ -187,34 +180,17 @@ class Preprocessor:
             return None
 
         ## Read and trim wav files
-    
-        ## librosa.load
-        if self.load_audio_library == 'librosa':
-           wav, org_sr = librosa.load(wav_path, sr =None) ## numpy # (184800,)
-           ## Resample
-           wav = librosa.resample(wav, orig_sr = org_sr, target_sr = self.sampling_rate )
-        
-        ## torchaudio.load
-        if self.load_audio_library == 'torchaudio':
-            wav, org_sr = torchaudio.load(wav_path) ## numpy # (184800,)
-            ## Resample
-            wav = torchaudio.functional.resample(wav, orig_freq = org_sr, new_freq = self.sampling_rate )
-            wav = wav.reshape(-1).numpy()
 
-        
-        if self.denoiser:
-            ## Denoise --> Resample
-            # self.denoiser_model = pretrained.dns64().cuda()
-            wav = convert_audio(wav.cuda(), org_sr, self.denoiser_model.sample_rate, self.denoiser_model.chin)
+        ## Librosa Load
+        wav, org_sr = librosa.load(wav_path, sr =None) ## numpy # (184800,)
 
-            self.denoiser_model.eval()
-            wav = self.denoiser_model(wav[None])[0] ## denoised
-            wav = wav.data.cpu() ## cpu
-            
-            # Resample librosa
-            wav = torchaudio.functional.resample(wav, orig_freq = self.denoiser_model.sample_rate, new_freq= self.sampling_rate )
-            wav = wav.reshape(-1).numpy() ## return like numpy.array() from torch tensor
-        
+        ## Resample
+        wav = librosa.resample(wav, orig_sr = org_sr, target_sr = self.sampling_rate )
+
+        ## Denoise Option - Non-Stationary Noise Reduction
+        if self.denoiser == "non-stationary-noise-reduction":
+            wav = nr.reduce_noise(y = wav, sr= org_sr, thresh_n_mult_nonstationary=2, stationary=False)
+
         wav = wav[ ## sampling_rate = 22050
             int(self.sampling_rate * start) : int(self.sampling_rate * end)
         ].astype(np.float32) # (173996,)
@@ -318,7 +294,7 @@ class Preprocessor:
         print()
         print(f"Lang: {self.lang}")
         print(f"SPEAKER_ID: {self.df.speaker_id.values[0]}")
-        print()
+        print(f"Noise Reduction? : {self.denoiser}")
         print(f"Sampling Rate: -[Resampled]-> {self.sampling_rate}")
         print()
         print(f"PITCH AVERAGING: {self.pitch_feature}")
@@ -364,9 +340,13 @@ class Preprocessor:
             #     self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
             # )
             sentence = row['sentence']
-            tg_path = os.path.join(
-                tg_base_path, speaker, "{}.TextGrid".format(basename)
-            )
+
+            if self.lang == "kor_ai_hub":
+                tg_path = row['tg_path']
+            else:
+                tg_path = os.path.join(
+                    tg_base_path, speaker, "{}.TextGrid".format(basename)
+                )
             # print(basename, speaker) 
             # 10087_10388_000000 10087
 
