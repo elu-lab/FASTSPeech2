@@ -189,7 +189,7 @@ class Preprocessor:
 
         ## Denoise Option - Non-Stationary Noise Reduction
         if self.denoiser == "non-stationary-noise-reduction":
-            wav = nr.reduce_noise(y = wav, sr= org_sr, thresh_n_mult_nonstationary=2, stationary=False)
+            wav = nr.reduce_noise(y = wav, sr= self.sampling_rate, thresh_n_mult_nonstationary=2, stationary=False)
 
         wav = wav[ ## sampling_rate = 22050
             int(self.sampling_rate * start) : int(self.sampling_rate * end)
