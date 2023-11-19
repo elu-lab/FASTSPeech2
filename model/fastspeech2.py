@@ -1,4 +1,4 @@
-#### Github[model.fastspeech2,py]: https://github.com/ming024/FastSpeech2/blob/master/model/fastspeech2.py
+## Github[model.fastspeech2,py]: https://github.com/ming024/FastSpeech2/blob/master/model/fastspeech2.py
 
 import os
 import json
@@ -13,7 +13,6 @@ from transformer.Layers import PostNet
 
 from .modules import VarianceAdaptor
 from utils.tools import get_mask_from_lengths
-
 
 
 class FastSpeech2(nn.Module):
@@ -31,10 +30,9 @@ class FastSpeech2(nn.Module):
                                      preprocess_config["preprocessing"]["mel"]["n_mel_channels"],  
                                     )
         
-        ## T4MR_16 ~
-        # self.use_postnet = model_config["fastspeech_two"]["use_posetnet"],
-        # if self.use_postnet:
-        #     self.postnet = PostNet()
+        self.use_postnet = model_config["fastspeech_two"]["use_posetnet"]
+        if self.use_postnet:
+            self.postnet = PostNet()
 
         #### In this Part, We go as 'None'
         self.speaker_emb = None
@@ -89,15 +87,15 @@ class FastSpeech2(nn.Module):
         output, mel_masks = self.decoder(output, mel_masks)
         output = self.mel_linear(output)
 
-        ## Original
-        # postnet_output = self.postnet(output) + output
+        if self.use_postnet:
+            postnet_output = self.postnet(output) + output
+        else:
+            postnet_output = output
 
-        ## T4MR_10 ~ T4MR_15 Code
-        ## PostNet: Officially Not in FastSpeech2 Paper -> This is why out in T4MR_10
         
         return (
-            output, # postnet_output, ## T4MR_10: PostNet_output Removed. ## And replaced like below: 
             output, 
+            postnet_output, 
             p_predictions,
             e_predictions,
             log_d_predictions,
