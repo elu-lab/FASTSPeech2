@@ -50,7 +50,7 @@
 - [T22_Theres_No_comfort](https://wandb.ai/wako/FASTSpeech2/runs/7gzyljgd?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
 
 
-## features
+## features(? differences?)
 - `accelerate` can allow `multi-gpu` training easily: Actually we trained on 2 x NVIDIA GeForece RTX 4090 GPUs. 
 - `torchmalloc.py` and `colorama` can show your resource like this exmaple below:
   <details>
