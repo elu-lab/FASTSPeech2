@@ -13,7 +13,7 @@ preprocessing:
     text_cleaners: ["transliteration_cleaners"] # ["english_cleaners"] # ["transliteration_cleaners"]
     language: "kor_ai_hub"
   audio:
-    denoiser: "non-stationary-noise-reduction"
+    denoiser: "False" # "non-stationary-noise-reduction" when you apply Denoiser: `Non-Stationary Noise Reduction` of `noisereduce`.
     prop_decrease: 0.0                ## Denoiser's
     thresh_n_mult_nonstationary: 2    ## Denoiser's
     sampling_rate: 22050
