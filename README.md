@@ -7,7 +7,7 @@
 <details>
 <summary>Korean</summary>
 <div>
-<a href="https://mfa-models.readthedocs.io/en/latest/dictionary/Korean/Korean%20MFA%20dictionary%20v2_0_0a.html">French MFA dictionary v2.0.0a</a> : <code style="white-space:nowrap;"> 'b d dʑ e eː h i iː j k kʰ k̚ k͈ m n o oː p pʰ p̚ p͈ s sʰ s͈ t tɕ tɕʰ tɕ͈ tʰ t̚ t͈ u uː w x ç ŋ ɐ ɕʰ ɕ͈ ɛ ɛː ɡ ɣ ɥ ɦ ɨ ɨː ɭ ɰ ɲ ɸ ɾ ʌ ʌː ʎ ʝ β'</code>
+<a href="https://mfa-models.readthedocs.io/en/latest/dictionary/Korean/Korean%20MFA%20dictionary%20v2_0_0a.html">Korean MFA dictionary v2.0.0a</a> : <code style="white-space:nowrap;"> 'b d dʑ e eː h i iː j k kʰ k̚ k͈ m n o oː p pʰ p̚ p͈ s sʰ s͈ t tɕ tɕʰ tɕ͈ tʰ t̚ t͈ u uː w x ç ŋ ɐ ɕʰ ɕ͈ ɛ ɛː ɡ ɣ ɥ ɦ ɨ ɨː ɭ ɰ ɲ ɸ ɾ ʌ ʌː ʎ ʝ β'</code>
 </div>
 </details>
 
@@ -31,6 +31,15 @@
  If you wanna see the training status, you can check here. You can check theses things above [`wandb link`](https://wandb.ai/wako/FastSpeech2_german):
 - Listen to the Samples(= Label Speech & predicted Speech)
 - Training / Eval's Mel-Spectrogram
+
+## Dataset
+- [AI-HUB: Multi-Speaker-Speech](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=542)
+- [MLS(=Multilingual LibriSpeech)](https://www.openslr.org/94/) 
+
+
+## Languages
+ We trained FastSpeech2 Model following languages with introducing each language's phonsets we embedded and trained. We used [`Montreal-Forced Alignment`](https://montreal-forced-aligner.readthedocs.io/en/latest/user_guide/workflows/alignment.html) 
+
 
 
 ## Preprocess
@@ -60,10 +69,13 @@ Also, you can train your TTS model with this command.
 CUDA_VISIBLE_DEVICES=0,3 accelerate launch train.py --n_epochs 990 --save_epochs 50 --synthesis_logging_epochs 30 --try_name T4_MoRrgetda
 ```
 
- Inference
+## Synthesize
+you can synthesize speech in CLI with this command: 
+```
+python synthesize.py --raw_texts <Text to syntheize to speech> --restore_step 53100
+```
+Also, you can check this [jupyter-notebook](https://github.com/elu-lab/FASTSPeech2/blob/main/synthesize_example.ipynb) when you try to synthesize.
 
-
- Synthesize
 
 
 ## References
