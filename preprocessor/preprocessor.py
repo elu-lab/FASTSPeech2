@@ -79,6 +79,8 @@ class Preprocessor:
             )
         
         self.denoiser = config["preprocessing"]["audio"]["denoiser"]
+        self.denoiser_prop_decrease = config["preprocessing"]["audio"]["denoiser"]['prop_decrease'] # 0
+        self.denoiser_thresh_n_mult_nonstationary = config["preprocessing"]["audio"]["denoiser"]['thresh_n_mult_nonstationary']# 2
 
     def normalize(self, in_dir, mean, std):
         max_value = np.finfo(np.float64).min
@@ -189,7 +191,11 @@ class Preprocessor:
 
         ## Denoise Option - Non-Stationary Noise Reduction
         if self.denoiser == "non-stationary-noise-reduction":
-            wav = nr.reduce_noise(y = wav, sr= self.sampling_rate, thresh_n_mult_nonstationary=2, stationary=False)
+            wav = nr.reduce_noise(y = wav, 
+                                  sr= self.sampling_rate, 
+                                  prop_decrease = self.denoiser_prop_decrease, # 0, 
+                                  thresh_n_mult_nonstationary= self.denoiser_thresh_n_mult_nonstationary , # 2,
+                                  stationary=False)
 
         wav = wav[ ## sampling_rate = 22050
             int(self.sampling_rate * start) : int(self.sampling_rate * end)
