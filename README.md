@@ -4,10 +4,10 @@
 ## Dataset
 - [AI-HUB: Multi-Speaker-Speech](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=542)
   - `Language`: Korean :kr:
-  - `sample_rate`: 48000 Hz
+  - `sample_rate`: 48kHz
 - [MLS(=Multilingual LibriSpeech)](https://www.openslr.org/94/)
   - `Language`: German :de:
-  - `sample_rate`: 16000 Hz
+  - `sample_rate`: 16kHz
 
 
 ## Languages
@@ -42,10 +42,12 @@
  <img src="/imgs/스크린샷 2023-11-20 오후 9.30.33.png" width="83%"></img>
 
 ## Recent Experiments
-- [T25_END_Game](https://wandb.ai/wako/FASTSpeech2/runs/jmgusg30?workspace=user-wako): FastSpeech2 + PostNet | :kr: Korean
-- [T24_Thank_you_Mobius](https://wandb.ai/wako/FASTSpeech2/runs/dzitww6h?workspace=user-wako): FastSpeech2 | :kr: Korean | Non-Stationary Reduction -> Resampled(48kHz -> 22.05kHz)
-- [T23_You_Just_Chosse_ur_Burden](https://wandb.ai/wako/FASTSpeech2/runs/3nkazngt?workspace=user-wako): FastSpeech2 | :kr: Korean | Resampled(48kHz -> 22.05kHz) -> Non-Stationary Reduction
-- [T22_Theres_No_comfort](https://wandb.ai/wako/FASTSpeech2/runs/7gzyljgd?workspace=user-wako): FastSpeech2 | :kr: Korean
+- [T25_END_Game](https://wandb.ai/wako/FASTSpeech2/runs/jmgusg30?workspace=user-wako): FastSpeech2 + PostNet | :kr: Korean | Single_Speaker: `8505`
+- [T24_Thank_you_Mobius](https://wandb.ai/wako/FASTSpeech2/runs/dzitww6h?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
+  - `Non-Stationary` Noise Reduction -> Resampled(`48kHz` -> `22.05kHz`)
+- [T23_You_Just_Chosse_ur_Burden](https://wandb.ai/wako/FASTSpeech2/runs/3nkazngt?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
+  - Resampled(`48kHz` -> `22.05kHz`) -> `Non-Stationary` Noise Reduction
+- [T22_Theres_No_comfort](https://wandb.ai/wako/FASTSpeech2/runs/7gzyljgd?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
 
 
 ## Preprocess
