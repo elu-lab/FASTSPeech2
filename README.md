@@ -81,6 +81,8 @@ Also, you can check this [jupyter-notebook](https://github.com/elu-lab/FASTSPeec
 ## References
 - [FastSpeech 2: Fast and High-Quality End-to-End Text to Speech](https://arxiv.org/abs/2006.04558)
 - [ming024/FastSpeech2](https://github.com/ming024/FastSpeech2)
+- [HGU-DLLAB/Korean-FastSpeech2-Pytorch
+Public](https://github.com/HGU-DLLAB/Korean-FastSpeech2-Pytorch)
 - [pytorch_hub/nvidia/HIFI-GAN](https://pytorch.org/hub/nvidia_deeplearningexamples_hifigan/)
 - [🤗 Accelerate](https://huggingface.co/docs/accelerate/package_reference/accelerator)
 - [🤗 Accelerate(Github)](https://github.com/huggingface/accelerate) 
