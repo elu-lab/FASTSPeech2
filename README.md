@@ -50,6 +50,23 @@
 - [T22_Theres_No_comfort](https://wandb.ai/wako/FASTSpeech2/runs/7gzyljgd?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
 
 
+## features
+- `accelerate` can allow `multi-gpu` training easily: Actually we trained on 2 x NVIDIA GeForece RTX 4090 GPUs. 
+- `torchmalloc.py` and `colorama` can show your resource like this exmaple below:
+  <details>
+  <summary> exxample</summary>
+  <div>
+  <img src="/imgs/스크린샷 2023-11-20 오후 11.25.09.png" width="60%"></img>
+  </div>
+  </details>
+- [`noisereduce`](https://github.com/timsainb/noisereduce) is available when you run `preprocessor.py`.
+  - `Non-Stataionary Noise Reduction`
+  - `prop_decrease` can avoid data-distortion. (0.0 ~ 1.0)
+- `wandb` instead of `Tensorboard`. `wandb` is compatible with `accelerate` and with `pytorch`.
+- [`[Pytorch_Hub] NVIDIA/HiFi-GAN`](https://pytorch.org/hub/nvidia_deeplearningexamples_hifigan/): used as a vocoder.
+    
+ 
+
 ## Preprocess
  This `preprocess.py` can give you the pitch, energy, duration and phones from `TextGrid` files. 
 ```
