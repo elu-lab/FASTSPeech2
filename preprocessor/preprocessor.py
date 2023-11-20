@@ -79,8 +79,8 @@ class Preprocessor:
             )
         
         self.denoiser = config["preprocessing"]["audio"]["denoiser"]
-        self.denoiser_prop_decrease = config["preprocessing"]["audio"]["denoiser"]['prop_decrease'] # 0
-        self.denoiser_thresh_n_mult_nonstationary = config["preprocessing"]["audio"]["denoiser"]['thresh_n_mult_nonstationary']# 2
+        self.denoiser_prop_decrease = config["preprocessing"]["audio"]['prop_decrease'] # 0
+        self.denoiser_thresh_n_mult_nonstationary = config["preprocessing"]["audio"]['thresh_n_mult_nonstationary']# 2
 
     def normalize(self, in_dir, mean, std):
         max_value = np.finfo(np.float64).min
