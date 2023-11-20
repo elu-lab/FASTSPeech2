@@ -14,6 +14,8 @@ preprocessing:
     language: "kor_ai_hub"
   audio:
     denoiser: "non-stationary-noise-reduction"
+    prop_decrease: 0.0                ## Denoiser's
+    thresh_n_mult_nonstationary: 2    ## Denoiser's
     sampling_rate: 22050
     max_wav_value: 32768.0
   stft:
