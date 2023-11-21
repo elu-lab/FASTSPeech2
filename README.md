@@ -37,8 +37,8 @@
 ## wandb [![wandb](https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-gradient.svg)](https://wandb.ai/wako/FastSpeech2_german)
  If you wanna see the training status, you can check here. You can check theses things above [`wandb link`](https://wandb.ai/wako/FastSpeech2_german):
 - Listen to the `Samples`(= `Label Speech` & `predicted Speech`)
-  - Available only in some experiments in :de:GERMAN
-  - We wanted to continue to collect samples during training in :kr:Korean, but couldn't. (Had to care storage)
+  - Available only in some experiments in :de: GERMAN
+  - We wanted to continue to collect samples during training in :kr: Korean, but couldn't. (Had to care storage)
 - Training / Eval's Mel-Spectrogram
 
  <img src="/imgs/스크린샷 2023-11-20 오후 9.30.33.png" width="83%"></img>
