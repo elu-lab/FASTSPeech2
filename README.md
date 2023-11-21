@@ -69,7 +69,7 @@
 
 ## Features(Differences?)
 - 🤗[`accelerate`](https://github.com/huggingface/accelerate) can allow `multi-gpu` training easily: Trained on 2 x NVIDIA GeForece RTX 4090 GPUs. 
-- [`torchmalloc.py`](https://github.com/elu-lab/FASTSPeech2/blob/main/torchmalloc.py) and :rainbow:[`colorama`](https://github.com/tartley/colorama) can show your resource in real-time (during training) like this example below:
+- [`torchmalloc.py`](https://github.com/elu-lab/FASTSPeech2/blob/main/torchmalloc.py) and :rainbow:[`colorama`](https://github.com/tartley/colorama) can show your resource in real-time (during training) like below:
   <details>
   <summary> example </summary>
   <div>
