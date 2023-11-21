@@ -38,8 +38,12 @@
  If you wanna see the training status, you can check here. You can check theses things above [`wandb link`](https://wandb.ai/wako/FASTSpeech2?workspace=user-wako):
 - Listen to the `samples`(= `Label Speech` & `predicted Speech`)
   - Available only in some experiments in :de: GERMAN.
-    - you can hear samples at `Tables` section in the dashboard or `Hidden Pannels` section in the bottom of each run's board.
-    - Available to listen samples: `T4MR_4_x_summed_1800k_BS1`, `T4MR_6_x_summed_max_seq_2k_1200k_BS16`, `T4MR_10_rs_22k_msl_1k_DO_on_vp_postnet_out_800epochs_bs48__`, `T4MR_15_hate_energy_predictor_kernel_size_5`, `T4MR_17_basic_but_bs64`, 
+    - you can hear samples at:
+      - `Tables` section in the dashboard
+      - `Hidden Pannels` section in the bottom of each run's board.
+    - Available to listen samples:
+      - `T4MR_4_x_summed_1800k_BS1`, `T4MR_6_x_summed_max_ ...`, `T4MR_10_rs_22k_msl_ ...`,     
+       `T4MR_15_hate_energy_ ...`, `T4MR_17_basic_but_bs64`.
   - We wanted to continue to collect samples during training in :kr: Korean, but couldn't. (Had to care storage)
 - Training / Eval's Mel-Spectrogram
 
