@@ -36,34 +36,49 @@
 
 ## wandb [![wandb](https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-gradient.svg)](https://wandb.ai/wako/FastSpeech2_german)
  If you wanna see the training status, you can check here. You can check theses things above [`wandb link`](https://wandb.ai/wako/FastSpeech2_german):
-- Listen to the Samples(= Label Speech & predicted Speech) -> Only in some experiments in GERMAN
+- Listen to the Samples(= Label Speech & predicted Speech)
+  : Available only in some experiments in GERMAN
 - Training / Eval's Mel-Spectrogram
 
  <img src="/imgs/스크린샷 2023-11-20 오후 9.30.33.png" width="83%"></img>
 
 ## Recent Experiments
-- [T25_END_Game](https://wandb.ai/wako/FASTSpeech2/runs/jmgusg30?workspace=user-wako): FastSpeech2 + PostNet | :kr: Korean | Single_Speaker: `8505`
-- [T24_Thank_you_Mobius](https://wandb.ai/wako/FASTSpeech2/runs/dzitww6h?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
-  - `Non-Stationary` Noise Reduction -> Resampled(`48kHz` -> `22.05kHz`)
-- [T23_You_Just_Chosse_ur_Burden](https://wandb.ai/wako/FASTSpeech2/runs/3nkazngt?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
-  - Resampled(`48kHz` -> `22.05kHz`) -> `Non-Stationary` Noise Reduction
-- [T22_Theres_No_comfort](https://wandb.ai/wako/FASTSpeech2/runs/7gzyljgd?workspace=user-wako): FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
+- [T25_END_Game](https://wandb.ai/wako/FASTSpeech2/runs/jmgusg30?workspace=user-wako)
+  - FastSpeech2 + PostNet | :kr: Korean | Single_Speaker: `8505`
+  - Resampled (from `48kHz` to `22.05kHz`) 
+  - `Batch_Size`: 64
+  - `Epochs`: 600
+- [T24_Thank_you_Mobius](https://wandb.ai/wako/FASTSpeech2/runs/dzitww6h?workspace=user-wako):
+  - FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
+  - `Non-Stationary` Noise Reduction -> Resampled (from `48kHz` to `22.05kHz`) 
+  - `Batch_Size`: 64
+  - `Epochs`: 600
+- [T23_You_Just_Chosse_ur_Burden](https://wandb.ai/wako/FASTSpeech2/runs/3nkazngt?workspace=user-wako)
+  - FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
+  - Resampled (from `48kHz` to `22.05kHz`) -> `Non-Stationary` Noise Reduction
+  - `Batch_Size`: 64
+  - `Epochs`: 600
+- [T22_Theres_No_comfort](https://wandb.ai/wako/FASTSpeech2/runs/7gzyljgd?workspace=user-wako)
+  - FastSpeech2 | :kr: Korean | Single_Speaker: `8505`
+  - Resampled (from `48kHz` to `22.05kHz`) 
+  - `Batch_Size`: 64
+  - `Epochs`: 600
 
-
-## features(differences?)
+## Features(Differences?)
 - 🤗[`accelerate`](https://github.com/huggingface/accelerate) can allow `multi-gpu` training easily: Actually we trained on 2 x NVIDIA GeForece RTX 4090 GPUs. 
-- [`torchmalloc.py`](https://github.com/elu-lab/FASTSPeech2/blob/main/torchmalloc.py) and :rainbow:[`colorama`](https://github.com/tartley/colorama) can show your resource like this exmaple below:
+- [`torchmalloc.py`](https://github.com/elu-lab/FASTSPeech2/blob/main/torchmalloc.py) and :rainbow:[`colorama`](https://github.com/tartley/colorama) can show your resource in real-time like this example below:
   <details>
-  <summary> exxample</summary>
+  <summary> example </summary>
   <div>
+   Referred: <a href="https://github.com/huggingface/peft/blob/main/examples/causal_language_modeling/peft_lora_clm_accelerate_ds_zero3_offload.py">🤗huggingface/peft/ .. example</a> <br/>   
   <img src="/imgs/스크린샷 2023-11-20 오후 11.25.09.png" width="60%"></img>
   </div>
   </details>
 - :mute:[`noisereduce`](https://github.com/timsainb/noisereduce) is available when you run `preprocessor.py`.
   - `Non-Stataionary Noise Reduction`
   - `prop_decrease` can avoid data-distortion. (0.0 ~ 1.0)
-- `wandb` instead of `Tensorboard`. `wandb` is compatible with `accelerate` and with `pytorch`.
-- [`[Pytorch-Hub]NVIDIA/HiFi-GAN`](https://pytorch.org/hub/nvidia_deeplearningexamples_hifigan/): used as a vocoder.
+- `wandb` instead of `Tensorboard`. `wandb` is compatible with 🤗`accelerate` and with :fire:`pytorch`.
+- :fire:[`[Pytorch-Hub]NVIDIA/HiFi-GAN`](https://pytorch.org/hub/nvidia_deeplearningexamples_hifigan/): used as a vocoder.
   
 
 ## Preprocess
