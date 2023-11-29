@@ -56,7 +56,6 @@
   - FastSpeech2 + PostNet | :us: English | Single_Speaker
   - `Batch_Size`: 64
   - `Epochs`: 800
-  - [`samples`](https://colab.research.google.com/drive/1EfCRkUKYzjPCfQF-J3VA_R7D5dYA47KI?usp=sharing)
 - [T25_END_Game](https://wandb.ai/wako/FASTSpeech2/runs/jmgusg30?workspace=user-wako)
   - FastSpeech2 + PostNet | :kr: Korean | Single_Speaker: `8505`
   - Resampled (from `48kHz` to `22.05kHz`) 
