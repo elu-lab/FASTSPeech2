@@ -8,7 +8,9 @@
 - [MLS(=Multilingual LibriSpeech)](https://www.openslr.org/94/)
   - `Language`: German :de:
   - `sample_rate`: 16kHz
-
+- [LJSpeech)](https://keithito.com/LJ-Speech-Dataset/)
+  - `Language`: English :us:
+  - `sample_rate`: 22.05kHz
 
 ## Languages
  We trained FastSpeech2 Model following languages with introducing each language's phonsets we embedded and trained. We used [`Montreal-Forced Alignment`](https://montreal-forced-aligner.readthedocs.io/en/latest/user_guide/workflows/alignment.html) tool to obtain the alignments between the utterances and the phoneme sequences as described in the [paper](https://arxiv.org/pdf/2006.04558.pdf). As you can see, we embedded [`IPA Phoneset`](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet). 
@@ -50,6 +52,11 @@
  <img src="/imgs/스크린샷 2023-11-20 오후 9.30.33.png" width="83%"></img>
 
 ## Recent Experiments
+- [T27_Hope_that_u_can_replace_that_with_sth_better](https://wandb.ai/wako/FASTSpeech2/runs/zihs7txi?workspace=user-wako)
+  - FastSpeech2 + PostNet | :us: English | Single_Speaker
+  - `Batch_Size`: 64
+  - `Epochs`: 800
+  - [`samples`](https://colab.research.google.com/drive/1EfCRkUKYzjPCfQF-J3VA_R7D5dYA47KI?usp=sharing)
 - [T25_END_Game](https://wandb.ai/wako/FASTSpeech2/runs/jmgusg30?workspace=user-wako)
   - FastSpeech2 + PostNet | :kr: Korean | Single_Speaker: `8505`
   - Resampled (from `48kHz` to `22.05kHz`) 
