@@ -346,8 +346,8 @@ class Preprocessor:
             #     self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
             # )
             sentence = row['sentence']
-
-            if self.lang == "kor_ai_hub":
+            
+            if self.lang == "kor_ai_hub" or self.lang == "en_ljs":
                 tg_path = row['tg_path']
             else:
                 tg_path = os.path.join(
