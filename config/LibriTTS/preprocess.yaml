@@ -11,7 +11,7 @@ preprocessing:
   val_size: 512
   text:
     text_cleaners: ["transliteration_cleaners"] # ["english_cleaners"] # ["transliteration_cleaners"]
-    language: "kor_ai_hub"
+    language: "kor_ai_hub" ## "kor_ai_hub", "en_ljs", "german"
   audio:
     denoiser: "False" # "non-stationary-noise-reduction" when you apply Denoiser: `Non-Stationary Noise Reduction` of `noisereduce`.
     prop_decrease: 0.0                ## Denoiser's
